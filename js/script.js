@@ -4,31 +4,43 @@ const gameOver = document.querySelector('.game-over');
 const btn = document.querySelector('.btn');
 const scoreElement = document.querySelector('.score');
 let score = 0;
+let started = true;
+let finished = false;
 
 /**
  * Adiciona a classe .jump à imagem .mario, removendo após um tempo
  */
 const jump = () => {
-    mario.classList.add('jump');
+    if (!started) {
+        window.location.reload();
+        return;
+    }
 
-    setTimeout(() => {
-        mario.classList.remove('jump');
-    }, 600);
+    if (!finished) {
+        mario.classList.add('jump');
+
+        setTimeout(() => {
+            mario.classList.remove('jump');
+        }, 600);
+    }
 }
 
 /**
  * Adiciona zeros à esquerda de um número
  */
- const completeZeros = (num, size) => {
+const completeZeros = (num, size) => {
     var s = num + '';
     while (s.length < size) s = '0' + s;
     return s;
 }
 
 const loop = setInterval(() => {
+    if (finished) {
+        return;
+    }
 
     score++;
-    scoreElement.innerHTML = completeZeros(Math.round(score/10), 4);
+    scoreElement.innerHTML = completeZeros(Math.round(score / 10), 4);
 
     const pipePosition = pipe.offsetLeft;
     const marioPosition = +window.getComputedStyle(mario).bottom.replace('px', '');
@@ -45,7 +57,23 @@ const loop = setInterval(() => {
         mario.style.marginLeft = '50px';
 
         gameOver.style.opacity = '1';
-        btn.style.opacity = '1';
+
+        // Efeito do mário caindo
+        setTimeout(() => {
+            mario.classList.add('game-over-mario');
+            setTimeout(() => {
+                mario.style.bottom = '200px';
+                setTimeout(() => {
+                    mario.style.bottom = '-200px';
+                    setTimeout(() => {
+                        btn.style.opacity = '1';
+                        started = false;
+                    }, 300);
+                }, 300);
+            }, 300);
+        }, 500);
+
+        finished = true;
 
         clearInterval(loop);
     }
@@ -54,3 +82,4 @@ const loop = setInterval(() => {
 
 
 document.addEventListener('keydown', jump);
+document.addEventListener('click', jump);

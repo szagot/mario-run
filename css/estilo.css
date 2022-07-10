@@ -87,6 +87,10 @@
     animation: jump-animation 600ms ease-out;
 }
 
+.game-over-mario {
+    transition: bottom 300ms ease;
+}
+
 @keyframes pipe-animation {
     from {
         right: -80px;
