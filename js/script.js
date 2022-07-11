@@ -1,4 +1,5 @@
 (function (d, w) {
+    const gameName = 'marioRun2';
     const board = d.querySelector('.game-board');
     const mario = d.querySelector('.mario');
     const pipe = d.querySelector('.pipe');
@@ -11,7 +12,7 @@
     let started = true;
     let finished = false;
     let init = false;
-    let maxScore = +(w.localStorage.getItem('marioRunMaxStore') || 0);
+    let maxScore = +(w.localStorage.getItem(gameName) || 0);
     let coinIndex = 0;
     let jumping = false;
 
@@ -118,7 +119,7 @@
             // Pontuação
             if (score > maxScore) {
                 maxScore = score;
-                w.localStorage.setItem('marioRunMaxStore', maxScore);
+                w.localStorage.setItem(gameName, maxScore);
                 maxScoreElement.innerHTML = completeZeros(maxScore, 5);
             }
 
