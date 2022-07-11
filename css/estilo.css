@@ -51,29 +51,30 @@
 
 .block {
     position: absolute;
-    right: 180px;
-    top: 20px;
-    width: 50px;
+    right: 130px;
+    top: 10px;
+    width: 40px;
 }
 
 .score,
 .max-score {
     position: absolute;
     right: 20px;
-    top: 18px;
-    font: bold 50px Arial, sans-serif;
+    top: 12px;
+    font: bold 35px Arial, sans-serif;
     color: #fff;
     text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, -1px 1px 2px #000, 1px -1px 2px #000;
 }
 
 .max-score {
-    width: 160px;
-    top: 15px;
+    width: 110px;
+    text-align: center;
+    top: 10px;
     right: calc(50% - 70px);
-    padding: 0 10px;
+    padding: 0 5px;
     border: 1px solid #000;
-    outline: 10px solid #5ca9f9;
-    box-shadow: 10px 10px 10px #000, -10px -10px 10px #000, -10px 10px 10px #000, 10px -10px 10px #000;
+    outline: 5px solid #5ca9f9;
+    box-shadow: 5px 5px 5px #000, -5px -5px 5px #000, -5px 5px 5px #000, 5px -5px 5px #000;
     border-radius: 5px;
     cursor: pointer;
 }
