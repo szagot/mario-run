@@ -11,11 +11,13 @@ let finished = false;
  * Adiciona a classe .jump à imagem .mario, removendo após um tempo
  */
 const jump = () => {
+    // Se o game-over foi acionado e uma tecla pressionada, reinicia o jogo
     if (!started) {
         window.location.reload();
         return;
     }
 
+    // Adiciona a classe de pulo apenas se o jogo está em andamento
     if (!finished) {
         mario.classList.add('jump');
 
@@ -34,17 +36,22 @@ const completeZeros = (num, size) => {
     return s;
 }
 
+/**
+ * Controlador da posição do Mario em relação ao cano
+ */
 const loop = setInterval(() => {
     if (finished) {
         return;
     }
 
+    // Pontuação
     score++;
     scoreElement.innerHTML = completeZeros(Math.round(score / 10), 4);
 
     const pipePosition = pipe.offsetLeft;
     const marioPosition = +window.getComputedStyle(mario).bottom.replace('px', '');
 
+    // Situação de game over
     if (pipePosition < 120 && pipePosition > 0 && marioPosition < 100) {
         pipe.style.animation = 'none';
         pipe.style.left = `${pipePosition}px`;
@@ -67,6 +74,8 @@ const loop = setInterval(() => {
                     mario.style.bottom = '-200px';
                     setTimeout(() => {
                         btn.style.opacity = '1';
+
+                        // Libera a ação de reinício
                         started = false;
                     }, 300);
                 }, 300);
@@ -80,5 +89,9 @@ const loop = setInterval(() => {
 
 }, 10);
 
+// Quando uma tecla é pressionada
 document.addEventListener('keydown', jump);
+// Quando um toque na tela é detectado
+document.addEventListener('touchstart', jump);
+// Quando há um click do mouse
 document.addEventListener('click', jump);

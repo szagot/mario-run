@@ -6,4 +6,4 @@ Jogo simples no estilo Chrome Dino (aquele do seu navegador quando a internet ca
 
 Enjoy!
 
-_Obs: Use qualquer tecla para pular e/ou para reiniciar a partida._
+_Obs: Use qualquer tecla para pular o cano e/ou para reiniciar a partida. Funciona com clicks do mouse ou toque na tela do aparelho._
