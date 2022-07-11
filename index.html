@@ -17,10 +17,9 @@
     <div class="game-board">
         <img src="img/clouds.png" class="clouds">
 
+
         <img src="img/pipe.png" class="pipe">
         <img src="img/mario.gif" class="mario">
-        <!-- Pre carregamento do mario com game-over-->
-        <img src="img/game-over.png" style="display: none">
 
         <img src="img/game-over-screen.png" class="game-over">
         <button class="btn" onclick="window.location.reload()">Reiniciar</button>
@@ -30,6 +29,11 @@
         <p class="score">00000</p>
         <p class="max-score" title="Limpar pontuação máxima"
             onclick="localStorage.removeItem('marioRunMaxStore'); this.innerHTML = '00000';">00000</p>
+
+        <!-- Pre carregamento dde imagens-->
+        <img src="img/game-over.png" style="display: none">
+        <img src="img/coin.png" style="display: none">
+
     </div>
 
 </body>

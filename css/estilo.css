@@ -20,6 +20,7 @@
     top: calc(50% - 100px);
     left: calc(50% - 257px);
     transition: opacity 1s ease;
+    z-index: 8;
 }
 
 .btn,
@@ -39,6 +40,7 @@
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
     cursor: pointer;
     transition: opacity 1s ease;
+    z-index: 9;
 }
 
 .start {
@@ -91,6 +93,7 @@
     top: 10%;
     width: 550px;
     animation: clouds-animation 10s infinite linear;
+    z-index: 1;
 }
 
 .pipe {
@@ -98,6 +101,7 @@
     bottom: 0;
     width: 80px;
     right: -80px;
+    z-index: 3;
 }
 
 .pipe-run {
@@ -110,6 +114,7 @@
     bottom: 0;
     width: 150px;
     transition: opacity 1s ease;
+    z-index: 4;
 }
 
 .mario-show {
@@ -117,20 +122,30 @@
 }
 
 .jump {
-    animation: jump-animation 600ms ease-out;
+    animation: jump-animation 700ms ease-out;
 }
 
 .game-over-mario {
     transition: bottom 300ms ease;
 }
 
+.coin {
+    position: absolute;
+    opacity: 1;
+    width: 20px;
+    bottom: 50px;
+    right: -200px;
+    animation: pipe-animation 2s linear;
+    z-index: 2;
+}
+
 @keyframes pipe-animation {
     from {
-        right: -80px;
+        right: -160px;
     }
 
     to {
-        right: 100%;
+        right: calc(100% + 80px);
     }
 }
 
