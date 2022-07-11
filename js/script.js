@@ -17,7 +17,7 @@ const gameName = 'marioRun2';
     let coinIndex = 0;
     let jumping = false;
     // A cada quantos pontos o Yoshi ficará disponível
-    const yoshiScore = 10;
+    const yoshiScore = 50;
     let yoshi = false;
 
     // Audio: Fundo
