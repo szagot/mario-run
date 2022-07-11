@@ -2,7 +2,7 @@
 
 ![Screenshot](img/readme.jpg)
 
-Jogo simples no estilo Chrome Dino (aquele do seu navegador quando a internet cai) com a temática do Mario Bros.
+Jogo simples no estilo Chrome Dino (aquele do seu navegador quando a internet cai) com a temática do Mario Bros feito usando apenas CSS e Javascript básicos.
 
 Enjoy!
 
