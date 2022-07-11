@@ -4,10 +4,13 @@ const gameOver = document.querySelector('.game-over');
 const btn = document.querySelector('.btn');
 const start = document.querySelector('.start');
 const scoreElement = document.querySelector('.score');
+const maxScoreElement = document.querySelector('.max-score');
 let score = 0;
+let scoreComputed = 0;
 let started = true;
 let finished = false;
 let init = false;
+let maxScore = +(localStorage.getItem('marioRunMaxStore') || 0);
 
 // Audio: Fundo
 const music = new Audio('audio/runing.mp3');
@@ -67,7 +70,8 @@ const loop = setInterval(() => {
 
     // Pontuação
     score++;
-    scoreElement.innerHTML = completeZeros(Math.round(score / 10), 4);
+    scoreComputed = Math.round(score / 10);
+    scoreElement.innerHTML = completeZeros(scoreComputed, 5);
 
     const pipePosition = pipe.offsetLeft;
     const marioPosition = +window.getComputedStyle(mario).bottom.replace('px', '');
@@ -88,6 +92,12 @@ const loop = setInterval(() => {
         mario.style.marginLeft = '50px';
 
         gameOver.style.opacity = '1';
+
+        if (scoreComputed > maxScore) {
+            maxScore = scoreComputed;
+            localStorage.setItem('marioRunMaxStore', maxScore);
+            maxScoreElement.innerHTML = completeZeros(maxScore, 5);
+        }
 
         // Efeito do mário caindo
         setTimeout(() => {
@@ -118,3 +128,6 @@ document.addEventListener('keydown', jump);
 document.addEventListener('touchstart', jump);
 // Quando há um click do mouse
 document.addEventListener('click', jump);
+
+// Seta pontuação máxima
+maxScoreElement.innerHTML = completeZeros(maxScore, 5);

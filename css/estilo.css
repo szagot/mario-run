@@ -51,18 +51,34 @@
 
 .block {
     position: absolute;
-    right: 150px;
+    right: 180px;
     top: 20px;
     width: 50px;
 }
 
-.score {
+.score,
+.max-score {
     position: absolute;
     right: 20px;
     top: 18px;
-    font: bold 50px 'Courier New', monospace;
+    font: bold 50px Arial, sans-serif;
     color: #fff;
     text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, -1px 1px 2px #000, 1px -1px 2px #000;
+}
+
+.max-score {
+    width: 160px;
+    top: 15px;
+    right: calc(50% - 70px);
+    padding: 0 10px;
+    border: 1px solid #000;
+    outline: 10px solid #5ca9f9;
+    box-shadow: 10px 10px 10px #000, -10px -10px 10px #000, -10px 10px 10px #000, 10px -10px 10px #000;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.max-score:active {
+    box-shadow: none;
 }
 
 .btn:active {
