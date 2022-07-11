@@ -6,7 +6,7 @@ Jogo simples no estilo Chrome Dino (aquele do seu navegador quando a internet ca
 
 Use qualquer tecla para pular o cano e/ou para reiniciar a partida. Funciona com clicks do mouse ou toque na tela do aparelho.
 
-Caso queira ver o jogo em ação, click [aqui](http://52.11.182.22/mario/). (Por enquanto veja pelo PC, e ligue o som!)
+Caso queira ver o jogo em ação, click [aqui](http://52.11.182.22/mario/). (Ligue o som!)
 
 Enjoy! :)
 

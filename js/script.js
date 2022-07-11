@@ -24,10 +24,10 @@ const jumpAudio = new Audio('audio/jump.mp3');
 const jump = () => {
     if (!init) {
         init = true;
-        music.play();
         mario.classList.add('mario-show');
         pipe.classList.add('pipe-run');
         start.style.opacity = 0;
+        music.play();
     }
 
     // Se o game-over foi acionado e uma tecla pressionada, reinicia o jogo
