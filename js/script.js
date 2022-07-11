@@ -2,15 +2,34 @@ const mario = document.querySelector('.mario');
 const pipe = document.querySelector('.pipe');
 const gameOver = document.querySelector('.game-over');
 const btn = document.querySelector('.btn');
+const start = document.querySelector('.start');
 const scoreElement = document.querySelector('.score');
 let score = 0;
 let started = true;
 let finished = false;
+let init = false;
+
+// Audio: Fundo
+const music = new Audio('audio/runing.mp3');
+// Audio: Game-over
+const gameOverAudio = new Audio('audio/game-over.mp3');
+// Audio: Pulo
+const jumpAudio = new Audio('audio/jump.mp3');
 
 /**
- * Adiciona a classe .jump à imagem .mario, removendo após um tempo
+ * Ação de pulo quando o jogo foi iniciado
+ * Se ainda não iniciado, inicia. 
+ * Se houve game-over, reinicia.
  */
 const jump = () => {
+    if (!init) {
+        init = true;
+        music.play();
+        mario.classList.add('mario-show');
+        pipe.classList.add('pipe-run');
+        start.style.opacity = 0;
+    }
+
     // Se o game-over foi acionado e uma tecla pressionada, reinicia o jogo
     if (!started) {
         window.location.reload();
@@ -18,7 +37,8 @@ const jump = () => {
     }
 
     // Adiciona a classe de pulo apenas se o jogo está em andamento
-    if (!finished) {
+    if (!finished && init) {
+        jumpAudio.play();
         mario.classList.add('jump');
 
         setTimeout(() => {
@@ -40,7 +60,8 @@ const completeZeros = (num, size) => {
  * Controlador da posição do Mario em relação ao cano
  */
 const loop = setInterval(() => {
-    if (finished) {
+    // Se houve game-over ou ainda não foi iniciado, não faz nada
+    if (finished || !init) {
         return;
     }
 
@@ -53,6 +74,9 @@ const loop = setInterval(() => {
 
     // Situação de game over
     if (pipePosition < 120 && pipePosition > 0 && marioPosition < 100) {
+        music.pause();
+        gameOverAudio.play();
+
         pipe.style.animation = 'none';
         pipe.style.left = `${pipePosition}px`;
 
@@ -86,7 +110,6 @@ const loop = setInterval(() => {
 
         clearInterval(loop);
     }
-
 }, 10);
 
 // Quando uma tecla é pressionada
