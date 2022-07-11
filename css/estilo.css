@@ -125,7 +125,7 @@
 }
 
 .jump {
-    animation: jump-animation 700ms ease-out;
+    animation: jump-animation 600ms ease-out;
 }
 
 .game-over-mario {

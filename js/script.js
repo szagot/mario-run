@@ -7,13 +7,13 @@
     const start = d.querySelector('.start');
     const scoreElement = d.querySelector('.score');
     const maxScoreElement = d.querySelector('.max-score');
-    let windowWidth = w.innerWidth || d.documentElement.clientWidth || d.body.clientWidth;
     let score = 0;
     let started = true;
     let finished = false;
     let init = false;
     let maxScore = +(w.localStorage.getItem('marioRunMaxStore') || 0);
     let coinIndex = 0;
+    let jumping = false;
 
     // Audio: Fundo
     const music = new Audio('audio/runing.mp3');
@@ -28,6 +28,10 @@
      * Se houve game-over, reinicia.
      */
     const jump = () => {
+        if (jumping) {
+            return;
+        }
+
         if (!init) {
             init = true;
             mario.classList.add('mario-show');
@@ -44,12 +48,14 @@
 
         // Adiciona a classe de pulo apenas se o jogo está em andamento
         if (!finished && init) {
+            jumping = true;
             mario.classList.add('jump');
             jumpAudio.play();
 
             w.setTimeout(() => {
                 mario.classList.remove('jump');
-            }, 700);
+                jumping = false;
+            }, 600);
         }
     }
 
@@ -155,15 +161,16 @@
         if (coinElement) {
             const coinLeft = coinElement.offsetLeft;
             const coinBottom = +w.getComputedStyle(coinElement).bottom.replace('px', '');
-            if (coinLeft <= 0 || (coinLeft < 120 && coinBottom > marioPosition && coinBottom < (marioPosition + 150))) {
+            if (coinLeft <= 0 || (coinLeft < 150 && coinBottom > marioPosition && coinBottom < (marioPosition + 150))) {
                 board.removeChild(coinElement);
 
                 // Se não passou do mário, computa a pontuação
                 if (coinLeft > 0) {
+                    let coinBetter = (coinBottom > 50);
                     // Som
-                    (new Audio('audio/coin.mp3')).play();
+                    (new Audio(coinBetter ? 'audio/coin2.mp3' : 'audio/coin.mp3')).play();
                     // Moedas altas valem 2, baixas valem 1
-                    score += (coinBottom > 50) ? 2 : 1;
+                    score += coinBetter ? 2 : 1;
                 }
             }
         }
@@ -175,11 +182,6 @@
     d.addEventListener('touchstart', jump);
     // Quando há um click do mouse
     d.addEventListener('click', jump);
-
-    // Tamanho da tela
-    w.addEventListener('resize', () => {
-        windowWidth = w.innerWidth || d.documentElement.clientWidth || d.body.clientWidth;
-    });
 
     // Seta pontuação máxima
     maxScoreElement.innerHTML = completeZeros(maxScore, 5);
