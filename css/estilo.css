@@ -14,6 +14,14 @@
     background: linear-gradient(#87ceeb, #e0f6ff);
 }
 
+.game-board::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 99;
+}
+
 .game-over {
     opacity: 0;
     position: absolute;
@@ -40,7 +48,7 @@
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
     cursor: pointer;
     transition: opacity 1s ease;
-    z-index: 9;
+    z-index: 999;
 }
 
 .start {
@@ -81,7 +89,7 @@
     box-shadow: 5px 5px 5px #000, -5px -5px 5px #000, -5px 5px 5px #000, 5px -5px 5px #000;
     border-radius: 5px;
     cursor: pointer;
-    z-index: 2;
+    z-index: 999;
 }
 .max-score:active {
     box-shadow: none;

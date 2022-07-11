@@ -162,7 +162,7 @@
         if (coinElement) {
             const coinLeft = coinElement.offsetLeft;
             const coinBottom = +w.getComputedStyle(coinElement).bottom.replace('px', '');
-            if (coinLeft <= 0 || (coinLeft < 150 && coinBottom > marioPosition && coinBottom < (marioPosition + 150))) {
+            if (coinLeft <= 0 || (coinLeft < 130 && coinBottom > marioPosition && coinBottom < (marioPosition + 120))) {
                 board.removeChild(coinElement);
 
                 // Se não passou do mário, computa a pontuação
