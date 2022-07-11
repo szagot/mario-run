@@ -4,6 +4,8 @@
 
 Jogo simples no estilo Chrome Dino (aquele do seu navegador quando a internet cai) com a temática do Mario Bros feito usando apenas CSS e Javascript básicos.
 
+Use qualquer tecla para pular o cano e/ou para reiniciar a partida. Funciona com clicks do mouse ou toque na tela do aparelho.
+
 Enjoy!
 
-_Obs: Use qualquer tecla para pular o cano e/ou para reiniciar a partida. Funciona com clicks do mouse ou toque na tela do aparelho._
+_Obs: Aprimoramento feito a partir da idéia de um [vídeo](https://youtu.be/r9buAwVBDhA) no canal [Manual do Dev](https://www.youtube.com/c/ManualdoDev), no Youtube._

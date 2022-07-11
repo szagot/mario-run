@@ -1,7 +1,0 @@
-borda: 30 50 80 50
-
-largura      : 1000
-Largura borda: 1164
-
-Altura       :  411
-Altura borda :  622
