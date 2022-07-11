@@ -1,5 +1,6 @@
+const gameName = 'marioRun2';
+
 (function (d, w) {
-    const gameName = 'marioRun2';
     const board = d.querySelector('.game-board');
     const mario = d.querySelector('.mario');
     const pipe = d.querySelector('.pipe');
@@ -15,6 +16,9 @@
     let maxScore = +(w.localStorage.getItem(gameName) || 0);
     let coinIndex = 0;
     let jumping = false;
+    // A cada quantos pontos o Yoshi ficará disponível
+    const yoshiScore = 10;
+    let yoshi = false;
 
     // Audio: Fundo
     const music = new Audio('audio/runing.mp3');
@@ -22,6 +26,9 @@
     const gameOverAudio = new Audio('audio/game-over.mp3');
     // Audio: Pulo
     const jumpAudio = new Audio('audio/jump.mp3');
+    // Audio: Yoshi
+    const yoshiAudio = new Audio('audio/yoshi.wav');
+    const yoshiOffAudio = new Audio('audio/yoshi-off.wav');
 
     /**
      * Ação de pulo quando o jogo foi iniciado
@@ -77,6 +84,19 @@
     }
 
     /**
+     * Troca o personagem (Mario monta no Yoshi ou desmonta)
+     */
+    const yoshiToogle = () => {
+        mario.src = yoshi ? 'img/mario.gif' : 'img/mario-yoshi.gif';
+        yoshi = !yoshi;
+        if (yoshi) {
+            yoshiAudio.play();
+        } else {
+            yoshiOffAudio.play();
+        }
+    }
+
+    /**
      * Controlador da posição do Mario em relação ao cano
      */
     let qt = getRandomNumberBetween(10, 100);
@@ -94,55 +114,79 @@
 
         // Situação de game over
         if (pipePosition < 120 && pipePosition > 0 && marioPosition < 100) {
-            music.pause();
-            gameOverAudio.play();
+            // Tá com o Yoshi?
+            if (yoshi) {
+                // Perde o Yoshi
+                yoshiToogle();
 
-            pipe.style.animation = 'none';
-            pipe.style.left = `${pipePosition}px`;
+                // Remove obstáculos para não dar game-over do mesmo jeito
+                pipe.style.left = '-100px';
+                pipe.classList.remove('pipe-run');
+                setTimeout(() => {
+                    // Recoloca obstáculos
+                    pipe.style.right = '-100px';
+                    pipe.style.left = 'auto';
+                    pipe.classList.add('pipe-run');
+                }, 1000);
+            } else {
+                // Game Over
+                music.pause();
+                gameOverAudio.play();
 
-            mario.style.animation = 'none';
-            mario.style.bottom = `${marioPosition}px`;
+                pipe.classList.remove('pipe-run');
+                pipe.style.left = `${pipePosition}px`;
 
-            mario.src = 'img/game-over.png';
-            mario.style.width = '75px';
-            mario.style.marginLeft = '50px';
+                mario.classList.remove('jump');
+                mario.style.bottom = `${marioPosition}px`;
 
-            gameOver.style.opacity = '1';
+                mario.src = 'img/game-over.png';
+                mario.style.width = '75px';
+                mario.style.marginLeft = '50px';
 
-            // Pausando moedas
-            const coins = d.querySelectorAll('.coin');
-            coins.forEach((coin) => {
-                coin.style.left = `${coin.offsetLeft}px`;
-                coin.style.animation = 'none';
-            });
+                gameOver.style.opacity = '1';
 
-            // Pontuação
-            if (score > maxScore) {
-                maxScore = score;
-                w.localStorage.setItem(gameName, maxScore);
-                maxScoreElement.innerHTML = completeZeros(maxScore, 5);
-            }
+                // Pausando moedas
+                const coins = d.querySelectorAll('.coin');
+                coins.forEach((coin) => {
+                    coin.style.left = `${coin.offsetLeft}px`;
+                    coin.style.animation = 'none';
+                });
 
-            // Efeito do mário caindo
-            w.setTimeout(() => {
-                mario.classList.add('game-over-mario');
+                // Pausando ovos
+                const egg = d.querySelector('.egg');
+                if (egg) {
+                    egg.style.left = `${egg.offsetLeft}px`;
+                    egg.style.animation = 'none';
+                }
+
+                // Pontuação
+                if (score > maxScore) {
+                    maxScore = score;
+                    w.localStorage.setItem(gameName, maxScore);
+                    maxScoreElement.innerHTML = completeZeros(maxScore, 5);
+                }
+
+                // Efeito do mário caindo
                 w.setTimeout(() => {
-                    mario.style.bottom = '200px';
+                    mario.classList.add('game-over-mario');
                     w.setTimeout(() => {
-                        mario.style.bottom = '-200px';
+                        mario.style.bottom = '200px';
                         w.setTimeout(() => {
-                            btn.style.opacity = '1';
+                            mario.style.bottom = '-200px';
+                            w.setTimeout(() => {
+                                btn.style.opacity = '1';
 
-                            // Libera a ação de reinício
-                            started = false;
+                                // Libera a ação de reinício
+                                started = false;
+                            }, 300);
                         }, 300);
                     }, 300);
-                }, 300);
-            }, 500);
+                }, 500);
 
-            finished = true;
+                finished = true;
 
-            clearInterval(loop);
+                clearInterval(loop);
+            }
         }
 
         // Criando Moedas!
@@ -172,9 +216,38 @@
                     (new Audio(coinBetter ? 'audio/coin2.mp3' : 'audio/coin.mp3')).play();
                     // Moedas altas valem 2, baixas valem 1
                     score += coinBetter ? 2 : 1;
+                    // Bonus por ter pego o yoshi
+                    if (yoshi) {
+                        score += coinBetter ? 2 : 1;
+                    }
                 }
             }
         }
+
+        // Criando ovo do Yoshi
+        let eggElement = d.querySelector('.egg');
+        if (!eggElement && !yoshi && score > 0 && (score % yoshiScore == 0 || (score + 1) % yoshiScore == 0)) {
+            const egg = d.createElement('img');
+            egg.src = 'img/egg-yoshi.gif';
+            egg.classList.add('egg');
+            board.appendChild(egg);
+        }
+
+        // Controle de ovo coletadas e pontuação
+        eggElement = d.querySelector('.egg');
+        if (eggElement) {
+            const eggLeft = eggElement.offsetLeft;
+            const eggBottom = +w.getComputedStyle(eggElement).bottom.replace('px', '');
+            if (eggLeft <= 0 || (eggLeft < 130 && eggBottom > marioPosition && eggBottom < (marioPosition + 120))) {
+                board.removeChild(eggElement);
+
+                // Se não passou do mário, computa a pontuação
+                if (eggLeft > 0) {
+                    yoshiToogle();
+                }
+            }
+        }
+
     }, 10);
 
     // Quando uma tecla é pressionada

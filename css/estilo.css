@@ -140,14 +140,19 @@
     transition: bottom 300ms ease;
 }
 
-.coin {
+.coin, .egg {
     position: absolute;
     opacity: 1;
-    width: 20px;
-    bottom: 50px;
+    width: 23px;
+    bottom: 200px;
     right: -200px;
     animation: pipe-animation 2s linear;
     z-index: 2;
+}
+
+.egg {    
+    width: 80px;
+    bottom: 200px;
 }
 
 @keyframes pipe-animation {
