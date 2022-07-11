@@ -44,12 +44,12 @@
 
         // Adiciona a classe de pulo apenas se o jogo está em andamento
         if (!finished && init) {
-            jumpAudio.play();
             mario.classList.add('jump');
+            jumpAudio.play();
 
             w.setTimeout(() => {
                 mario.classList.remove('jump');
-            }, 600);
+            }, 700);
         }
     }
 
@@ -102,6 +102,14 @@
 
             gameOver.style.opacity = '1';
 
+            // Pausando moedas
+            const coins = d.querySelectorAll('.coin');
+            coins.forEach((coin) => {
+                coin.style.left = `${coin.offsetLeft}px`;
+                coin.style.animation = 'none';
+            });
+
+            // Pontuação
             if (score > maxScore) {
                 maxScore = score;
                 w.localStorage.setItem('marioRunMaxStore', maxScore);
