@@ -1,5 +1,3 @@
-const gameName = 'marioRun2';
-
 (function (d, w) {
     const board = d.querySelector('.game-board');
     const mario = d.querySelector('.mario');
@@ -16,9 +14,8 @@ const gameName = 'marioRun2';
     let maxScore = +(w.localStorage.getItem(gameName) || 0);
     let coinIndex = 0;
     let jumping = false;
-    // A cada quantos pontos o Yoshi ficará disponível
-    const yoshiScore = 50;
     let yoshi = false;
+    let bowserChanging = false;
 
     // Audio: Fundo
     const music = new Audio('audio/runing.mp3');
@@ -97,6 +94,31 @@ const gameName = 'marioRun2';
     }
 
     /**
+     * Troca o inimigo (Cano ou Bowser)
+     */
+    const bowser = () => {
+        pipe.src = 'img/bowser.gif';
+        pipe.classList.remove('pipe-run');
+        pipe.style.right = '-100px';
+        pipe.style.bottom = '10px';
+        setTimeout(() => {
+            pipe.classList.add('bowser-run');
+            setTimeout(() => {
+                if (!finished) {
+                    pipe.src = 'img/pipe.png';
+                    pipe.style.right = '-100px';
+                    pipe.style.bottom = '0px';
+                    pipe.classList.remove('bowser-run');
+                    setTimeout(() => {
+                        pipe.classList.add('pipe-run');
+                        bowserChanging = false;
+                    }, 100);
+                }
+            }, 1000);
+        }, 100);
+    }
+
+    /**
      * Controlador da posição do Mario em relação ao cano
      */
     let qt = getRandomNumberBetween(10, 100);
@@ -107,7 +129,7 @@ const gameName = 'marioRun2';
         }
 
         // Pontuação
-        scoreElement.innerHTML = completeZeros(score, 5);
+        scoreElement.innerHTML = completeZeros(score, 4);
 
         const pipePosition = pipe.offsetLeft;
         const marioPosition = +w.getComputedStyle(mario).bottom.replace('px', '');
@@ -122,6 +144,7 @@ const gameName = 'marioRun2';
                 // Remove obstáculos para não dar game-over do mesmo jeito
                 pipe.style.left = '-100px';
                 pipe.classList.remove('pipe-run');
+                pipe.src = 'img/pipe.png';
                 setTimeout(() => {
                     // Recoloca obstáculos
                     pipe.style.right = '-100px';
@@ -163,7 +186,7 @@ const gameName = 'marioRun2';
                 if (score > maxScore) {
                     maxScore = score;
                     w.localStorage.setItem(gameName, maxScore);
-                    maxScoreElement.innerHTML = completeZeros(maxScore, 5);
+                    maxScoreElement.innerHTML = completeZeros(maxScore, 4);
                 }
 
                 // Efeito do mário caindo
@@ -185,7 +208,7 @@ const gameName = 'marioRun2';
 
                 finished = true;
 
-                clearInterval(loop);
+                w.clearInterval(loop);
             }
         }
 
@@ -248,6 +271,17 @@ const gameName = 'marioRun2';
             }
         }
 
+        // Trocando pipe pelo bowser
+        if (score % bowserScore == 0 && score > 0 && !bowserChanging) {
+            bowserChanging = true;
+            const changeBowser = setInterval(() => {
+                if (pipe.offsetLeft <= -80) {
+                    bowser();
+                    w.clearInterval(changeBowser);
+                }
+            }, 1);
+        }
+
     }, 10);
 
     // Quando uma tecla é pressionada
@@ -258,5 +292,5 @@ const gameName = 'marioRun2';
     d.addEventListener('click', jump);
 
     // Seta pontuação máxima
-    maxScoreElement.innerHTML = completeZeros(maxScore, 5);
+    maxScoreElement.innerHTML = completeZeros(maxScore, 4);
 })(document, window);

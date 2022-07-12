@@ -61,7 +61,7 @@
 
 .block {
     position: absolute;
-    right: 130px;
+    right: 110px;
     top: 10px;
     width: 40px;
     z-index: 2;
@@ -79,7 +79,7 @@
 }
 
 .max-score {
-    width: 110px;
+    width: 90px;
     text-align: center;
     top: 10px;
     right: calc(50% - 70px);
@@ -117,6 +117,10 @@
 
 .pipe-run {
     animation: pipe-animation 2s infinite linear;
+}
+
+.bowser-run {
+    animation: pipe-animation 1s infinite linear;
 }
 
 .mario {

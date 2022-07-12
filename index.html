@@ -9,6 +9,7 @@
     <link rel="shortcut icon" href="favicon.ico">
 
     <link rel="stylesheet" href="css/estilo.css">
+    <script src="js/config.js"></script>
     <script src="js/script.js" defer></script>
 </head>
 
@@ -26,14 +27,15 @@
         <button class="start">Jogar</button>
 
         <img src="img/block.png" class="block">
-        <p class="score">00000</p>
+        <p class="score">0000</p>
         <p class="max-score" title="Limpar pontuação máxima"
-            onclick="localStorage.removeItem(gameName); this.innerHTML = '00000';">00000</p>
+            onclick="localStorage.removeItem(gameName); this.innerHTML = '0000';">0000</p>
 
         <!-- Pre carregamento dde imagens-->
         <img src="img/game-over.png" style="display: none">
         <img src="img/coin.png" style="display: none">
         <img src="img/egg-yoshi.gif" style="display: none">
+        <img src="img/bowser.gif" style="display: none">
     </div>
 
 </body>
