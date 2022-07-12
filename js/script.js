@@ -159,7 +159,7 @@
         // Pontuação
         scoreElement.innerHTML = completeZeros(score, 4);
 
-        const pipePosition = pipe.offsetLeft;
+        let pipePosition = pipe.offsetLeft;
         const marioPosition = +w.getComputedStyle(mario).bottom.replace('px', '');
 
         // Situação de game over
@@ -170,15 +170,18 @@
                 yoshiToogle();
 
                 // Remove obstáculos para não dar game-over do mesmo jeito
-                pipe.style.left = '-100px';
                 pipe.classList.remove('pipe-run');
+                pipe.style.left = '-100px';
+                pipePosition = -100;
                 pipe.src = 'img/pipe.png';
+                // Recoloca obstáculos
                 setTimeout(() => {
-                    // Recoloca obstáculos
                     pipe.style.right = '-100px';
                     pipe.style.left = 'auto';
-                    pipe.classList.add('pipe-run');
-                }, 1000);
+                    setTimeout(() => {
+                        pipe.classList.add('pipe-run');
+                    }, 1000);
+                }, 500);
             } else {
                 // Game Over
                 music.pause();
