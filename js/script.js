@@ -24,6 +24,8 @@
     const gameOverAudio = new Audio('audio/game-over.mp3');
     // Audio: Pulo
     const jumpAudio = new Audio('audio/jump.mp3');
+    // Audio: Bowser
+    const bowserAudio = new Audio('audio/bowser-laugh.wav');
     // Audio: Yoshi
     const yoshiAudio = new Audio('audio/yoshi.wav');
     const yoshiOffAudio = new Audio('audio/yoshi-off.wav');
@@ -122,6 +124,7 @@
      * Troca o inimigo (Cano ou Bowser)
      */
     const bowser = () => {
+        bowserAudio.play();
         pipe.src = 'img/bowser.gif';
         pipe.classList.remove('pipe-run');
         pipe.style.right = '-100px';
@@ -140,7 +143,7 @@
                     }, 100);
                 }
             }, 1000);
-        }, 100);
+        }, 500);
     }
 
     /**
