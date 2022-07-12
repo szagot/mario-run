@@ -19,6 +19,7 @@
 
     // Audio: Fundo
     const music = new Audio('audio/runing.mp3');
+    const yoshiMusic = new Audio('audio/yoshi-music.mp3');
     // Audio: Game-over
     const gameOverAudio = new Audio('audio/game-over.mp3');
     // Audio: Pulo
@@ -26,6 +27,26 @@
     // Audio: Yoshi
     const yoshiAudio = new Audio('audio/yoshi.wav');
     const yoshiOffAudio = new Audio('audio/yoshi-off.wav');
+
+    // Looping
+    if (typeof music.loop == 'boolean') {
+        music.loop = true;
+    }
+    else {
+        music.addEventListener('ended', function () {
+            this.currentTime = 0;
+            this.play();
+        }, false);
+    }
+    if (typeof yoshiMusic.loop == 'boolean') {
+        yoshiMusic.loop = true;
+    }
+    else {
+        yoshiMusic.addEventListener('ended', function () {
+            this.currentTime = 0;
+            this.play();
+        }, false);
+    }
 
     /**
      * Ação de pulo quando o jogo foi iniciado
@@ -87,9 +108,13 @@
         mario.src = yoshi ? 'img/mario.gif' : 'img/mario-yoshi.gif';
         yoshi = !yoshi;
         if (yoshi) {
+            music.pause();
             yoshiAudio.play();
+            yoshiMusic.play();
         } else {
+            yoshiMusic.pause();
             yoshiOffAudio.play();
+            music.play();
         }
     }
 
