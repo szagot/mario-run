@@ -250,8 +250,13 @@
             const coin = d.createElement('img');
             coin.src = 'img/coin.png';
             coin.classList.add('coin');
+            const isBetter = getRandomNumberBetween(1, 3) % 2 == 0;
+            coin.style.bottom = isBetter ? '200px' : '50px';
+            if (isBetter && qt > 90) {
+                coin.src = 'img/yoshi-coin.gif';
+                coin.classList.add('yoshi-coin');
+            }
             board.appendChild(coin);
-            coin.style.bottom = (getRandomNumberBetween(1, 3) % 2 == 0) ? '200px' : '50px';
         }
         coinIndex++;
 
@@ -260,6 +265,7 @@
         if (coinElement) {
             const coinLeft = coinElement.offsetLeft;
             const coinBottom = +w.getComputedStyle(coinElement).bottom.replace('px', '');
+            const isyoshiCoin = coinElement.classList.contains("yoshi-coin");
             if (coinLeft <= 0 || (coinLeft < 130 && coinBottom > marioPosition && coinBottom < (marioPosition + 120))) {
                 board.removeChild(coinElement);
 
@@ -267,12 +273,12 @@
                 if (coinLeft > 0) {
                     let coinBetter = (coinBottom > 50);
                     // Som
-                    (new Audio(coinBetter ? 'audio/coin2.mp3' : 'audio/coin.mp3')).play();
-                    // Moedas altas valem 2, baixas valem 1
-                    score += coinBetter ? 2 : 1;
+                    (new Audio(isyoshiCoin ? 'audio/yoshi-coin.mp3' : (coinBetter ? 'audio/coin2.mp3' : 'audio/coin.mp3'))).play();
+                    // Moedas altas valem 2, baixas valem 1. Se for uma Yoshi Coin, vale 5
+                    score += isyoshiCoin ? 5 : (coinBetter ? 2 : 1);
                     // Bonus por ter pego o yoshi
                     if (yoshi) {
-                        score += coinBetter ? 2 : 1;
+                        score += isyoshiCoin ? 5 : (coinBetter ? 2 : 1);
                     }
                 }
             }

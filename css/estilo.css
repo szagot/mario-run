@@ -163,6 +163,14 @@
     bottom: 200px;
 }
 
+.yoshi-coin {
+    position: absolute;
+    opacity: 1;
+    width: 50px;
+    bottom: 180px !important;
+    z-index: 2;
+}
+
 @keyframes pipe-animation {
     from {
         right: -160px;
