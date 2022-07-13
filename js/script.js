@@ -268,8 +268,8 @@
         }
 
         // Criando Moedas! (ou fantasmas, ovos, etc...)
-        if (coinIndex >= qt) {
-            qt = getRandomNumberBetween(10, isNight ? 300 : 100);
+        if (coinIndex >= qt && !finished && init) {
+            qt = getRandomNumberBetween(10, isNight ? 300 : 80);
             coinIndex = 0;
             const coin = d.createElement('img');
             coin.src = 'img/coin.png';
