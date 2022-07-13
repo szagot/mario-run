@@ -374,7 +374,7 @@
                 coin.classList.add('coin');
                 const isBetter = getRandomNumberBetween(1, 3) % 2 == 0;
                 coin.style.bottom = isBetter ? '200px' : '50px';
-                if (isBetter && qt > 90 && !isNight) {
+                if (isBetter && qt > 70 && !isNight) {
                     coin.src = 'img/yoshi-coin.gif';
                     coin.classList.add('yoshi-coin');
                 }
