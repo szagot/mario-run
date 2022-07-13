@@ -1,4 +1,4 @@
-(function (d, w) {
+(function (d, w, audio, gN, yS, bS, tN, tD) {
     const board = d.querySelector('.game-board');
     const mario = d.querySelector('.mario');
     const pipe = d.querySelector('.pipe');
@@ -7,47 +7,63 @@
     const start = d.querySelector('.start');
     const scoreElement = d.querySelector('.score');
     const maxScoreElement = d.querySelector('.max-score');
+    const night = d.querySelector('.night');
     let score = 0;
     let started = true;
     let finished = false;
     let init = false;
-    let maxScore = +(w.localStorage.getItem(gameName) || 0);
+    let maxScore = +(w.localStorage.getItem(gN) || 0);
     let coinIndex = 0;
     let jumping = false;
     let yoshi = false;
     let bowserChanging = false;
+    let isNight = false;
+    let ghostOver = false;
 
     // Audio: Fundo
-    const music = new Audio('audio/runing.mp3');
-    const yoshiMusic = new Audio('audio/yoshi-music.mp3');
+    const music = audio('runing.mp3', true);
+    const yoshiMusic = audio('yoshi-music.mp3', true);
+    const nightMusic = audio('night.mp3', true);
     // Audio: Game-over
-    const gameOverAudio = new Audio('audio/game-over.mp3');
+    const gameOverAudio = audio('game-over.mp3');
     // Audio: Pulo
-    const jumpAudio = new Audio('audio/jump.mp3');
+    const jumpAudio = audio('jump.mp3');
     // Audio: Bowser
-    const bowserAudio = new Audio('audio/bowser-laugh.wav');
+    const bowserAudio = audio('bowser-laugh.wav');
     // Audio: Yoshi
-    const yoshiAudio = new Audio('audio/yoshi.wav');
-    const yoshiOffAudio = new Audio('audio/yoshi-off.wav');
+    const yoshiAudio = audio('yoshi.wav');
+    const yoshiOffAudio = audio('yoshi-off.wav');
+    // Audio em preparo que não serão usados assim
+    audio('boo-coin.mp3');
+    audio('yoshi-coin.mp3');
+    audio('coin2.mp3');
+    audio('coin.mp3');
 
-    // Looping
-    if (typeof music.loop == 'boolean') {
-        music.loop = true;
-    }
-    else {
-        music.addEventListener('ended', function () {
-            this.currentTime = 0;
-            this.play();
-        }, false);
-    }
-    if (typeof yoshiMusic.loop == 'boolean') {
-        yoshiMusic.loop = true;
-    }
-    else {
-        yoshiMusic.addEventListener('ended', function () {
-            this.currentTime = 0;
-            this.play();
-        }, false);
+    /**
+     *  Controlando a noite e o dia
+     */
+    const callNight = () => {
+        setTimeout(() => {
+            // Prossegue apenas se o jogo estiver em execução
+            if (!finished && init) {
+                night.classList.add('mario-show');
+                isNight = true;
+                music.pause();
+                nightMusic.play();
+
+                setTimeout(() => {
+                    // Prossegue apenas se o jogo estiver em execução
+                    if (!finished && init) {
+                        night.classList.remove('mario-show');
+                        isNight = false;
+                        nightMusic.pause();
+                        music.play();
+
+                        callNight();
+                    }
+                }, tD);
+            }
+        }, tN);
     }
 
     /**
@@ -66,6 +82,7 @@
             pipe.classList.add('pipe-run');
             start.style.opacity = 0;
             music.play();
+            callNight();
         }
 
         // Se o game-over foi acionado e uma tecla pressionada, reinicia o jogo
@@ -124,6 +141,11 @@
      * Troca o inimigo (Cano ou Bowser)
      */
     const bowser = () => {
+        // Bowser não aparece a noite
+        if (isNight) {
+            return;
+        }
+
         bowserAudio.play();
         pipe.src = 'img/bowser.gif';
         pipe.classList.remove('pipe-run');
@@ -143,7 +165,7 @@
                     }, 100);
                 }
             }, 1000);
-        }, 500);
+        }, 1000);
     }
 
     /**
@@ -163,9 +185,9 @@
         const marioPosition = +w.getComputedStyle(mario).bottom.replace('px', '');
 
         // Situação de game over
-        if (pipePosition < 120 && pipePosition > 0 && marioPosition < 100) {
+        if ((pipePosition < 120 && pipePosition > 0 && marioPosition < 100) || ghostOver) {
             // Tá com o Yoshi?
-            if (yoshi) {
+            if (yoshi && !ghostOver) {
                 // Perde o Yoshi
                 yoshiToogle();
 
@@ -185,6 +207,8 @@
             } else {
                 // Game Over
                 music.pause();
+                nightMusic.pause();
+                yoshiMusic.pause();
                 gameOverAudio.play();
 
                 pipe.classList.remove('pipe-run');
@@ -216,7 +240,7 @@
                 // Pontuação
                 if (score > maxScore) {
                     maxScore = score;
-                    w.localStorage.setItem(gameName, maxScore);
+                    w.localStorage.setItem(gN, maxScore);
                     maxScoreElement.innerHTML = completeZeros(maxScore, 4);
                 }
 
@@ -243,18 +267,22 @@
             }
         }
 
-        // Criando Moedas!
+        // Criando Moedas! (ou fantasmas, ovos, etc...)
         if (coinIndex >= qt) {
-            qt = getRandomNumberBetween(10, 100);
+            qt = getRandomNumberBetween(10, isNight ? 300 : 100);
             coinIndex = 0;
             const coin = d.createElement('img');
             coin.src = 'img/coin.png';
             coin.classList.add('coin');
             const isBetter = getRandomNumberBetween(1, 3) % 2 == 0;
             coin.style.bottom = isBetter ? '200px' : '50px';
-            if (isBetter && qt > 90) {
+            if (isBetter && qt > 90 && !isNight) {
                 coin.src = 'img/yoshi-coin.gif';
                 coin.classList.add('yoshi-coin');
+            }
+            if (isNight) {
+                coin.src = 'img/boo.gif';
+                coin.classList.add('boo-coin');
             }
             board.appendChild(coin);
         }
@@ -266,6 +294,7 @@
             const coinLeft = coinElement.offsetLeft;
             const coinBottom = +w.getComputedStyle(coinElement).bottom.replace('px', '');
             const isyoshiCoin = coinElement.classList.contains("yoshi-coin");
+            const isBoo = coinElement.classList.contains('boo-coin');
             if (coinLeft <= 0 || (coinLeft < 130 && coinBottom > marioPosition && coinBottom < (marioPosition + 120))) {
                 board.removeChild(coinElement);
 
@@ -273,20 +302,32 @@
                 if (coinLeft > 0) {
                     let coinBetter = (coinBottom > 50);
                     // Som
-                    (new Audio(isyoshiCoin ? 'audio/yoshi-coin.mp3' : (coinBetter ? 'audio/coin2.mp3' : 'audio/coin.mp3'))).play();
-                    // Moedas altas valem 2, baixas valem 1. Se for uma Yoshi Coin, vale 5
-                    score += isyoshiCoin ? 5 : (coinBetter ? 2 : 1);
-                    // Bonus por ter pego o yoshi
-                    if (yoshi) {
+                    (audio(isBoo ? 'boo-coin.mp3' : (isyoshiCoin ? 'yoshi-coin.mp3' : (coinBetter ? 'coin2.mp3' : 'coin.mp3')))).play();
+                    // Se for noite, tira pontos
+                    if (isBoo) {
+                        score--;
+                        if (score <= 0) {
+                            ghostOver = true;
+                        } else if (yoshi) {
+                            // Se tiver o Yoshi e tocar no fantasma, perde o Yoshi
+                            yoshiToogle();
+                        }
+
+                    } else {
+                        // Moedas altas valem 2, baixas valem 1. Se for uma Yoshi Coin, vale 5.
                         score += isyoshiCoin ? 5 : (coinBetter ? 2 : 1);
+                        // Bonus por ter pego o yoshi
+                        if (yoshi) {
+                            score += isyoshiCoin ? 5 : (coinBetter ? 2 : 1);
+                        }
                     }
                 }
             }
         }
 
-        // Criando ovo do Yoshi
+        // Criando ovo do Yoshi se não for de noite
         let eggElement = d.querySelector('.egg');
-        if (!eggElement && !yoshi && score > 0 && (score % yoshiScore == 0 || (score + 1) % yoshiScore == 0)) {
+        if (!isNight && !eggElement && !yoshi && score > 0 && (score % yS == 0 || (score + 1) % yS == 0)) {
             const egg = d.createElement('img');
             egg.src = 'img/egg-yoshi.gif';
             egg.classList.add('egg');
@@ -301,7 +342,7 @@
             if (eggLeft <= 0 || (eggLeft < 130 && eggBottom > marioPosition && eggBottom < (marioPosition + 120))) {
                 board.removeChild(eggElement);
 
-                // Se não passou do mário, computa a pontuação
+                // Pegou o ovo?
                 if (eggLeft > 0) {
                     yoshiToogle();
                 }
@@ -309,7 +350,7 @@
         }
 
         // Trocando pipe pelo bowser
-        if (score % bowserScore == 0 && score > 0 && !bowserChanging) {
+        if (score % bS == 0 && score > 0 && !bowserChanging) {
             bowserChanging = true;
             const changeBowser = setInterval(() => {
                 if (pipe.offsetLeft <= -80) {
@@ -330,4 +371,4 @@
 
     // Seta pontuação máxima
     maxScoreElement.innerHTML = completeZeros(maxScore, 4);
-})(document, window);
+})(document, window, prepareAudio, gameName, yoshiScore, bowserScore, turnNight, turnDay);

@@ -6,7 +6,7 @@
 
 .game-board {
     position: fixed;
-    top:0;
+    top: 0;
     height: 0;
     left: 0;
     right: 0;
@@ -164,7 +164,8 @@
     transition: bottom 300ms ease;
 }
 
-.coin, .egg {
+.coin,
+.egg {
     position: absolute;
     opacity: 1;
     width: 23px;
@@ -174,7 +175,7 @@
     z-index: 2;
 }
 
-.egg {    
+.egg {
     width: 80px;
     bottom: 200px;
 }
@@ -185,6 +186,10 @@
     width: 50px;
     bottom: 180px !important;
     z-index: 2;
+}
+
+.boo-coin {
+    width: 70px;
 }
 
 @keyframes pipe-animation {
