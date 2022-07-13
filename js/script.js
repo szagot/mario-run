@@ -17,6 +17,7 @@
     let jumping = false;
     let yoshi = false;
     let bowserChanging = false;
+    let changeBowser;
     let isNight = false;
     let nightStarted;
     let dayStarted;
@@ -101,6 +102,9 @@
         }
         if (dayStarted) {
             w.clearInterval(dayStarted);
+        }
+        if (changeBowser) {
+            w.clearInterval(changeBowser);
         }
 
         startGame();
@@ -446,7 +450,7 @@
             // Trocando pipe pelo bowser
             if (score % bS == 0 && score > 0 && !bowserChanging) {
                 bowserChanging = true;
-                const changeBowser = setInterval(() => {
+                changeBowser = setInterval(() => {
                     if (pipe.offsetLeft <= -80) {
                         bowser();
                         w.clearInterval(changeBowser);
