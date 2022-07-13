@@ -17,7 +17,6 @@
     let jumping = false;
     let yoshi = false;
     let bowserChanging = false;
-    let changeBowser;
     let isNight = false;
     let nightStarted;
     let dayStarted;
@@ -72,7 +71,6 @@
         pipe.style.bottom = '0';
         pipe.classList.remove('pipe-run');
         pipe.classList.remove('bowser-run');
-        bowserChanging = false;
 
         // Moedas
         const coins = d.querySelectorAll('.coin');
@@ -88,7 +86,9 @@
 
         // Tela
         gameOver.style.opacity = '0';
+        btn.style.zIndex = '998';
         btn.style.opacity = '0';
+        start.style.zIndex = '999';
         start.style.opacity = '1';
 
         init = false;
@@ -102,9 +102,6 @@
         }
         if (dayStarted) {
             w.clearInterval(dayStarted);
-        }
-        if (changeBowser) {
-            w.clearInterval(changeBowser);
         }
 
         startGame();
@@ -233,9 +230,10 @@
      */
     const bowser = () => {
         // Bowser não aparece a noite
-        if (isNight) {
+        if (isNight || bowserChanging) {
             return;
         }
+        bowserChanging = true;
 
         bowserAudio.play();
         pipe.src = 'img/bowser.gif';
@@ -344,6 +342,8 @@
                                 mario.style.bottom = '-200px';
                                 w.setTimeout(() => {
                                     btn.style.opacity = '1';
+                                    btn.style.zIndex = '999';
+                                    start.style.zIndex = '998';
 
                                     // Libera a ação de reinício
                                     started = false;
@@ -448,14 +448,9 @@
             }
 
             // Trocando pipe pelo bowser
-            if (score % bS == 0 && score > 0 && !bowserChanging) {
-                bowserChanging = true;
-                changeBowser = setInterval(() => {
-                    if (pipe.offsetLeft <= -80) {
-                        bowser();
-                        w.clearInterval(changeBowser);
-                    }
-                }, 1);
+            if (score % bS == 0 && score > 0 && pipe.offsetLeft <= -80) {
+                console.log('bowser');
+                bowser();
             }
 
         }, 10);
