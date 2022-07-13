@@ -14,7 +14,7 @@ const turnDay = 10000;
  * @param {string} file Somente o nome do arquivo
  * @param {boolean} isLoop É pra rodar em loop?
  */
-prepareAudio = (file, isLoop) => {
+const prepareAudio = (file, isLoop) => {
     audio = new Audio('audio/' + file);
 
     if (isLoop) {

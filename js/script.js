@@ -40,6 +40,13 @@
     audio('coin.mp3');
 
     /**
+     * Limpa a tela pra reiniciar o jogo
+     */
+    const clearScreen = () => {
+        w.location.reload();
+    };
+
+    /**
      *  Controlando a noite e o dia
      */
     const callNight = () => {
@@ -95,7 +102,7 @@
 
         // Se o game-over foi acionado e uma tecla pressionada, reinicia o jogo
         if (!started) {
-            w.location.reload();
+            clearScreen();
             return;
         }
 
@@ -234,8 +241,7 @@
                 mario.style.bottom = `${marioPosition}px`;
 
                 mario.src = 'img/game-over.png';
-                mario.style.width = '75px';
-                mario.style.marginLeft = '50px';
+                mario.classList.add('over');
 
                 gameOver.style.opacity = '1';
 
@@ -383,8 +389,16 @@
     // Quando um toque na tela é detectado
     d.addEventListener('touchstart', jump);
     // Quando há um click do mouse
-    d.addEventListener('click', jump);
 
     // Seta pontuação máxima
     maxScoreElement.innerHTML = completeZeros(maxScore, 4);
+
+    // Botões
+    maxScoreElement.addEventListener('click', () => {
+        localStorage.removeItem(gameName);
+        maxScoreElement.innerHTML = '0000';
+    })
+    btn.addEventListener('click', clearScreen);
+    start.addEventListener('click', jump);
+
 })(document, window, prepareAudio, gameName, yoshiScore, bowserScore, turnNight, turnDay);
