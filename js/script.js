@@ -48,7 +48,11 @@
             if (!finished && init) {
                 night.classList.add('mario-show');
                 isNight = true;
-                music.pause();
+                if (yoshi) {
+                    yoshiMusic.pause();
+                } else {
+                    music.pause();
+                }
                 nightMusic.play();
 
                 setTimeout(() => {
@@ -57,7 +61,11 @@
                         night.classList.remove('mario-show');
                         isNight = false;
                         nightMusic.pause();
-                        music.play();
+                        if (yoshi) {
+                            yoshiMusic.play();
+                        } else {
+                            music.play();
+                        }
 
                         callNight();
                     }
@@ -127,13 +135,21 @@
         mario.src = yoshi ? 'img/mario.gif' : 'img/mario-yoshi.gif';
         yoshi = !yoshi;
         if (yoshi) {
-            music.pause();
+            if (isNight) {
+                nightMusic.pause();
+            } else {
+                music.pause();
+            }
             yoshiAudio.play();
             yoshiMusic.play();
         } else {
             yoshiMusic.pause();
             yoshiOffAudio.play();
-            music.play();
+            if (isNight) {
+                nightMusic.play();
+            } else {
+                music.play();
+            }
         }
     }
 
