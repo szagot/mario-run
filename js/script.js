@@ -18,6 +18,8 @@
     let yoshi = false;
     let bowserChanging = false;
     let isNight = false;
+    let nightStarted;
+    let dayStarted;
     let ghostOver = false;
 
     // Audio: Fundo
@@ -33,6 +35,7 @@
     // Audio: Yoshi
     const yoshiAudio = audio('yoshi.wav');
     const yoshiOffAudio = audio('yoshi-off.wav');
+
     // Audio em preparo que não serão usados assim
     audio('boo-coin.mp3');
     audio('yoshi-coin.mp3');
@@ -43,14 +46,71 @@
      * Limpa a tela pra reiniciar o jogo
      */
     const clearScreen = () => {
-        w.location.reload();
+        // Noite
+        night.classList.remove('mario-show');
+        isNight = false;
+
+        // Músicas
+        music.pause();
+        nightMusic.pause();
+        yoshiMusic.pause();
+
+        // Mário
+        mario.classList.remove('mario-show');
+        w.setTimeout(() => {
+            mario.src = 'img/mario.gif';
+            mario.classList.remove('over');
+            mario.classList.remove('game-over-mario');
+            mario.style.bottom = '0';
+        }, 300);
+
+        // Cano
+        pipe.src = 'img/pipe.png';
+        pipe.style.left = 'auto';
+        pipe.style.right = '-100px';
+        pipe.style.bottom = '0';
+        pipe.classList.remove('pipe-run');
+        pipe.classList.remove('bowser-run');
+        bowserChanging = false;
+
+        // Moedas
+        const coins = d.querySelectorAll('.coin');
+        coins.forEach((coin) => {
+            board.removeChild(coin);
+        });
+
+        // Ovo
+        const eggElement = d.querySelector('.egg');
+        if (eggElement) {
+            board.removeChild(eggElement);
+        }
+
+        // Tela
+        gameOver.style.opacity = '0';
+        btn.style.opacity = '0';
+        start.style.opacity = '1';
+
+        init = false;
+        finished = false;
+        started = true;
+        score = 0;
+        scoreElement.innerHTML = '0000';
+
+        if (nightStarted) {
+            w.clearInterval(nightStarted);
+        }
+        if (dayStarted) {
+            w.clearInterval(dayStarted);
+        }
+
+        startGame();
     };
 
     /**
      *  Controlando a noite e o dia
      */
     const callNight = () => {
-        setTimeout(() => {
+        nightStarted = w.setInterval(() => {
             // Prossegue apenas se o jogo estiver em execução
             if (!finished && init) {
                 night.classList.add('mario-show');
@@ -62,7 +122,7 @@
                 }
                 nightMusic.play();
 
-                setTimeout(() => {
+                dayStarted = w.setInterval(() => {
                     // Prossegue apenas se o jogo estiver em execução
                     if (!finished && init) {
                         night.classList.remove('mario-show');
@@ -76,7 +136,11 @@
 
                         callNight();
                     }
+
+                    w.clearInterval(dayStarted);
                 }, tD);
+
+                w.clearInterval(nightStarted);
             }
         }, tN);
     }
@@ -174,15 +238,15 @@
         pipe.classList.remove('pipe-run');
         pipe.style.right = '-100px';
         pipe.style.bottom = '10px';
-        setTimeout(() => {
+        w.setTimeout(() => {
             pipe.classList.add('bowser-run');
-            setTimeout(() => {
+            w.setTimeout(() => {
                 if (!finished) {
                     pipe.src = 'img/pipe.png';
                     pipe.style.right = '-100px';
                     pipe.style.bottom = '0px';
                     pipe.classList.remove('bowser-run');
-                    setTimeout(() => {
+                    w.setTimeout(() => {
                         pipe.classList.add('pipe-run');
                         bowserChanging = false;
                     }, 100);
@@ -194,195 +258,204 @@
     /**
      * Controlador da posição do Mario em relação ao cano
      */
-    let qt = getRandomNumberBetween(10, 100);
-    const loop = w.setInterval(() => {
-        // Se houve game-over ou ainda não foi iniciado, não faz nada
-        if (finished || !init) {
-            return;
-        }
+    const startGame = () => {
+        let qt = getRandomNumberBetween(10, 100);
+        const loop = w.setInterval(() => {
+            // Se houve game-over ou ainda não foi iniciado, não faz nada
+            if (finished || !init) {
+                return;
+            }
 
-        // Pontuação
-        scoreElement.innerHTML = completeZeros(score, 4);
+            // Pontuação
+            scoreElement.innerHTML = completeZeros(score, 4);
 
-        let pipePosition = pipe.offsetLeft;
-        const marioPosition = +w.getComputedStyle(mario).bottom.replace('px', '');
+            let pipePosition = pipe.offsetLeft;
+            const marioPosition = +w.getComputedStyle(mario).bottom.replace('px', '');
 
-        // Situação de game over
-        if ((pipePosition < 120 && pipePosition > 0 && marioPosition < 100) || ghostOver) {
-            // Tá com o Yoshi?
-            if (yoshi && !ghostOver) {
-                // Perde o Yoshi
-                yoshiToogle();
+            // Situação de game over
+            if ((pipePosition < 120 && pipePosition > 0 && marioPosition < 100) || ghostOver) {
+                // Tá com o Yoshi?
+                if (yoshi && !ghostOver) {
+                    // Perde o Yoshi
+                    yoshiToogle();
 
-                // Remove obstáculos para não dar game-over do mesmo jeito
-                pipe.classList.remove('pipe-run');
-                pipe.style.left = '-100px';
-                pipePosition = -100;
-                pipe.src = 'img/pipe.png';
-                // Recoloca obstáculos
-                setTimeout(() => {
-                    pipe.style.right = '-100px';
-                    pipe.style.left = 'auto';
-                    setTimeout(() => {
-                        pipe.classList.add('pipe-run');
-                    }, 1000);
-                }, 500);
-            } else {
-                // Game Over
-                music.pause();
-                nightMusic.pause();
-                yoshiMusic.pause();
-                gameOverAudio.play();
-
-                pipe.classList.remove('pipe-run');
-                pipe.style.left = `${pipePosition}px`;
-
-                mario.classList.remove('jump');
-                mario.style.bottom = `${marioPosition}px`;
-
-                mario.src = 'img/game-over.png';
-                mario.classList.add('over');
-
-                gameOver.style.opacity = '1';
-
-                // Pausando moedas
-                const coins = d.querySelectorAll('.coin');
-                coins.forEach((coin) => {
-                    coin.style.left = `${coin.offsetLeft}px`;
-                    coin.style.animation = 'none';
-                });
-
-                // Pausando ovos
-                const egg = d.querySelector('.egg');
-                if (egg) {
-                    egg.style.left = `${egg.offsetLeft}px`;
-                    egg.style.animation = 'none';
-                }
-
-                // Pontuação
-                if (score > maxScore) {
-                    maxScore = score;
-                    w.localStorage.setItem(gN, maxScore);
-                    maxScoreElement.innerHTML = completeZeros(maxScore, 4);
-                }
-
-                // Efeito do mário caindo
-                w.setTimeout(() => {
-                    mario.classList.add('game-over-mario');
+                    // Remove obstáculos para não dar game-over do mesmo jeito
+                    pipe.classList.remove('pipe-run');
+                    pipe.style.left = '-100px';
+                    pipePosition = -100;
+                    pipe.src = 'img/pipe.png';
+                    // Recoloca obstáculos
                     w.setTimeout(() => {
-                        mario.style.bottom = '200px';
+                        pipe.style.right = '-100px';
+                        pipe.style.left = 'auto';
                         w.setTimeout(() => {
-                            mario.style.bottom = '-200px';
-                            w.setTimeout(() => {
-                                btn.style.opacity = '1';
+                            pipe.classList.add('pipe-run');
+                        }, 1000);
+                    }, 500);
+                } else {
+                    // Game Over
+                    music.pause();
+                    nightMusic.pause();
+                    yoshiMusic.pause();
+                    gameOverAudio.play();
 
-                                // Libera a ação de reinício
-                                started = false;
+                    pipe.classList.remove('pipe-run');
+                    pipe.style.left = `${pipePosition}px`;
+
+                    mario.classList.remove('jump');
+                    mario.style.bottom = `${marioPosition}px`;
+
+                    mario.src = 'img/game-over.png';
+                    mario.classList.add('over');
+
+                    gameOver.style.opacity = '1';
+
+                    // Pausando moedas
+                    const coins = d.querySelectorAll('.coin');
+                    coins.forEach((coin) => {
+                        coin.style.left = `${coin.offsetLeft}px`;
+                        coin.style.animation = 'none';
+                    });
+
+                    // Pausando ovos
+                    const egg = d.querySelector('.egg');
+                    if (egg) {
+                        egg.style.left = `${egg.offsetLeft}px`;
+                        egg.style.animation = 'none';
+                    }
+
+                    // Pontuação
+                    if (score > maxScore) {
+                        maxScore = score;
+                        w.localStorage.setItem(gN, maxScore);
+                        maxScoreElement.innerHTML = completeZeros(maxScore, 4);
+                    }
+
+                    // Efeito do mário caindo
+                    w.setTimeout(() => {
+                        mario.classList.add('game-over-mario');
+                        w.setTimeout(() => {
+                            mario.style.bottom = '200px';
+                            w.setTimeout(() => {
+                                mario.style.bottom = '-200px';
+                                w.setTimeout(() => {
+                                    btn.style.opacity = '1';
+
+                                    // Libera a ação de reinício
+                                    started = false;
+                                }, 300);
                             }, 300);
                         }, 300);
-                    }, 300);
-                }, 500);
+                    }, 500);
 
-                finished = true;
+                    finished = true;
 
-                w.clearInterval(loop);
+                    if (nightStarted) {
+                        w.clearInterval(nightStarted);
+                    }
+                    if (dayStarted) {
+                        w.clearInterval(dayStarted);
+                    }
+
+                    w.clearInterval(loop);
+                }
             }
-        }
 
-        // Criando Moedas! (ou fantasmas, ovos, etc...)
-        if (coinIndex >= qt && !finished && init) {
-            qt = getRandomNumberBetween(10, isNight ? 300 : 80);
-            coinIndex = 0;
-            const coin = d.createElement('img');
-            coin.src = 'img/coin.png';
-            coin.classList.add('coin');
-            const isBetter = getRandomNumberBetween(1, 3) % 2 == 0;
-            coin.style.bottom = isBetter ? '200px' : '50px';
-            if (isBetter && qt > 90 && !isNight) {
-                coin.src = 'img/yoshi-coin.gif';
-                coin.classList.add('yoshi-coin');
+            // Criando Moedas! (ou fantasmas, ovos, etc...)
+            if (coinIndex >= qt && !finished && init) {
+                qt = getRandomNumberBetween(10, isNight ? 300 : 80);
+                coinIndex = 0;
+                const coin = d.createElement('img');
+                coin.src = 'img/coin.png';
+                coin.classList.add('coin');
+                const isBetter = getRandomNumberBetween(1, 3) % 2 == 0;
+                coin.style.bottom = isBetter ? '200px' : '50px';
+                if (isBetter && qt > 90 && !isNight) {
+                    coin.src = 'img/yoshi-coin.gif';
+                    coin.classList.add('yoshi-coin');
+                }
+                if (isNight) {
+                    coin.src = 'img/boo.gif';
+                    coin.classList.add('boo-coin');
+                }
+                board.appendChild(coin);
             }
-            if (isNight) {
-                coin.src = 'img/boo.gif';
-                coin.classList.add('boo-coin');
-            }
-            board.appendChild(coin);
-        }
-        coinIndex++;
+            coinIndex++;
 
-        // Controle de moedas coletadas e pontuação
-        const coinElement = d.querySelector('.coin');
-        if (coinElement) {
-            const coinLeft = coinElement.offsetLeft;
-            const coinBottom = +w.getComputedStyle(coinElement).bottom.replace('px', '');
-            const isyoshiCoin = coinElement.classList.contains("yoshi-coin");
-            const isBoo = coinElement.classList.contains('boo-coin');
-            if (coinLeft <= 0 || (coinLeft < 130 && coinBottom > marioPosition && coinBottom < (marioPosition + 120))) {
-                board.removeChild(coinElement);
+            // Controle de moedas coletadas e pontuação
+            const coinElement = d.querySelector('.coin');
+            if (coinElement) {
+                const coinLeft = coinElement.offsetLeft;
+                const coinBottom = +w.getComputedStyle(coinElement).bottom.replace('px', '');
+                const isyoshiCoin = coinElement.classList.contains("yoshi-coin");
+                const isBoo = coinElement.classList.contains('boo-coin');
+                if (coinLeft <= 0 || (coinLeft < 130 && coinBottom > marioPosition && coinBottom < (marioPosition + 120))) {
+                    board.removeChild(coinElement);
 
-                // Se não passou do mário, computa a pontuação
-                if (coinLeft > 0) {
-                    let coinBetter = (coinBottom > 50);
-                    // Som
-                    (audio(isBoo ? 'boo-coin.mp3' : (isyoshiCoin ? 'yoshi-coin.mp3' : (coinBetter ? 'coin2.mp3' : 'coin.mp3')))).play();
-                    // Se for noite, tira pontos
-                    if (isBoo) {
-                        score--;
-                        if (score <= 0) {
-                            ghostOver = true;
-                        } else if (yoshi) {
-                            // Se tiver o Yoshi e tocar no fantasma, perde o Yoshi
-                            yoshiToogle();
-                        }
+                    // Se não passou do mário, computa a pontuação
+                    if (coinLeft > 0) {
+                        let coinBetter = (coinBottom > 50);
+                        // Som
+                        (audio(isBoo ? 'boo-coin.mp3' : (isyoshiCoin ? 'yoshi-coin.mp3' : (coinBetter ? 'coin2.mp3' : 'coin.mp3')))).play();
+                        // Se for noite, tira pontos
+                        if (isBoo) {
+                            score--;
+                            if (score <= 0) {
+                                ghostOver = true;
+                            } else if (yoshi) {
+                                // Se tiver o Yoshi e tocar no fantasma, perde o Yoshi
+                                yoshiToogle();
+                            }
 
-                    } else {
-                        // Moedas altas valem 2, baixas valem 1. Se for uma Yoshi Coin, vale 5.
-                        score += isyoshiCoin ? 5 : (coinBetter ? 2 : 1);
-                        // Bonus por ter pego o yoshi
-                        if (yoshi) {
+                        } else {
+                            // Moedas altas valem 2, baixas valem 1. Se for uma Yoshi Coin, vale 5.
                             score += isyoshiCoin ? 5 : (coinBetter ? 2 : 1);
+                            // Bonus por ter pego o yoshi
+                            if (yoshi) {
+                                score += isyoshiCoin ? 5 : (coinBetter ? 2 : 1);
+                            }
                         }
                     }
                 }
             }
-        }
 
-        // Criando ovo do Yoshi se não for de noite
-        let eggElement = d.querySelector('.egg');
-        if (!isNight && !eggElement && !yoshi && score > 0 && (score % yS == 0 || (score + 1) % yS == 0)) {
-            const egg = d.createElement('img');
-            egg.src = 'img/egg-yoshi.gif';
-            egg.classList.add('egg');
-            board.appendChild(egg);
-        }
+            // Criando ovo do Yoshi se não for de noite
+            let eggElement = d.querySelector('.egg');
+            if (!isNight && !eggElement && !yoshi && score > 0 && (score % yS == 0 || (score + 1) % yS == 0)) {
+                const egg = d.createElement('img');
+                egg.src = 'img/egg-yoshi.gif';
+                egg.classList.add('egg');
+                board.appendChild(egg);
+            }
 
-        // Controle de ovo coletadas e pontuação
-        eggElement = d.querySelector('.egg');
-        if (eggElement) {
-            const eggLeft = eggElement.offsetLeft;
-            const eggBottom = +w.getComputedStyle(eggElement).bottom.replace('px', '');
-            if (eggLeft <= 0 || (eggLeft < 130 && eggBottom > marioPosition && eggBottom < (marioPosition + 120))) {
-                board.removeChild(eggElement);
+            // Controle de ovo coletadas e pontuação
+            eggElement = d.querySelector('.egg');
+            if (eggElement) {
+                const eggLeft = eggElement.offsetLeft;
+                const eggBottom = +w.getComputedStyle(eggElement).bottom.replace('px', '');
+                if (eggLeft <= 0 || (eggLeft < 130 && eggBottom > marioPosition && eggBottom < (marioPosition + 120))) {
+                    board.removeChild(eggElement);
 
-                // Pegou o ovo?
-                if (eggLeft > 0) {
-                    yoshiToogle();
+                    // Pegou o ovo?
+                    if (eggLeft > 0) {
+                        yoshiToogle();
+                    }
                 }
             }
-        }
 
-        // Trocando pipe pelo bowser
-        if (score % bS == 0 && score > 0 && !bowserChanging) {
-            bowserChanging = true;
-            const changeBowser = setInterval(() => {
-                if (pipe.offsetLeft <= -80) {
-                    bowser();
-                    w.clearInterval(changeBowser);
-                }
-            }, 1);
-        }
+            // Trocando pipe pelo bowser
+            if (score % bS == 0 && score > 0 && !bowserChanging) {
+                bowserChanging = true;
+                const changeBowser = setInterval(() => {
+                    if (pipe.offsetLeft <= -80) {
+                        bowser();
+                        w.clearInterval(changeBowser);
+                    }
+                }, 1);
+            }
 
-    }, 10);
+        }, 10);
+    }
 
     // Quando uma tecla é pressionada
     d.addEventListener('keydown', jump);
@@ -400,5 +473,7 @@
     })
     btn.addEventListener('click', clearScreen);
     start.addEventListener('click', jump);
+
+    startGame();
 
 })(document, window, prepareAudio, gameName, yoshiScore, bowserScore, turnNight, turnDay);
