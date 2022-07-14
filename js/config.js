@@ -6,7 +6,7 @@ const yoshiScore = 35;
 const bowserScore = 20;
 // Após quantos segundos fica de noite? E de dia?
 const turnNight = 30000;
-const turnDay = 30000;
+const turnDay = 20000;
 
 /**
  * Prepara um áudio para ser executado
