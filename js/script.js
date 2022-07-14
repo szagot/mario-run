@@ -165,9 +165,7 @@
             mario.classList.add('mario-show');
             pipe.classList.add('pipe-run');
             start.style.opacity = 0;
-            w.setTimeout(() => {
-                music.play();
-            }, 100);
+            music.play();
             callNight();
         }
 
