@@ -8,6 +8,7 @@
     const scoreElement = d.querySelector('.score');
     const maxScoreElement = d.querySelector('.max-score');
     const night = d.querySelector('.night');
+    let loop;
     let score = 0;
     let started = true;
     let finished = false;
@@ -102,6 +103,9 @@
         }
         if (dayStarted) {
             w.clearInterval(dayStarted);
+        }
+        if (loop) {
+            clearInterval(loop);
         }
 
         startGame();
@@ -251,7 +255,7 @@
                     w.setTimeout(() => {
                         pipe.classList.add('pipe-run');
                         bowserChanging = false;
-                    }, 100);
+                    }, 1000);
                 }
             }, 1000);
         }, 1000);
@@ -262,7 +266,7 @@
      */
     const startGame = () => {
         let qt = getRandomNumberBetween(10, 100);
-        const loop = w.setInterval(() => {
+        loop = w.setInterval(() => {
             // Se houve game-over ou ainda não foi iniciado, não faz nada
             if (finished || !init) {
                 return;
