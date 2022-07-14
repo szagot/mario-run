@@ -184,7 +184,7 @@
             w.setTimeout(() => {
                 mario.classList.remove('jump');
                 jumping = false;
-            }, 500);
+            }, 600);
         }
     }
 
@@ -279,7 +279,7 @@
             const marioPosition = +w.getComputedStyle(mario).bottom.replace('px', '');
 
             // Situação de game over
-            if ((pipePosition < 120 && pipePosition > 0 && marioPosition < 77) || ghostOver) {
+            if ((pipePosition < 120 && pipePosition > 0 && marioPosition < 100) || ghostOver) {
                 // Tá com o Yoshi?
                 if (yoshi && !ghostOver) {
                     // Perde o Yoshi
@@ -377,7 +377,7 @@
                 coin.src = 'img/coin.png';
                 coin.classList.add('coin');
                 const isBetter = getRandomNumberBetween(1, 3) % 2 == 0;
-                coin.style.bottom = isBetter ? '160px' : '50px';
+                coin.style.bottom = isBetter ? '200px' : '50px';
                 if (isBetter && qt > 70 && !isNight) {
                     coin.src = 'img/yoshi-coin.gif';
                     coin.classList.add('yoshi-coin');
@@ -397,7 +397,7 @@
                 const coinBottom = +w.getComputedStyle(coinElement).bottom.replace('px', '');
                 const isyoshiCoin = coinElement.classList.contains("yoshi-coin");
                 const isBoo = coinElement.classList.contains('boo-coin');
-                if (coinLeft <= 0 || (coinLeft < 130 && coinBottom > marioPosition && coinBottom < (marioPosition + 100))) {
+                if (coinLeft <= 0 || (coinLeft < 130 && coinBottom > marioPosition && coinBottom < (marioPosition + 120))) {
                     board.removeChild(coinElement);
 
                     // Se não passou do mário, computa a pontuação
@@ -452,7 +452,7 @@
             }
 
             // Trocando pipe pelo bowser
-            if ((score % bS == 0 || (score + 1) % bS == 0 || (score - 5) % bS == 0) && score > 10 && pipe.offsetLeft <= -80) {
+            if ((score % bS == 0 || (score + 1) % bS == 0) && pipe.offsetLeft <= -80) {
                 bowser();
             }
 
