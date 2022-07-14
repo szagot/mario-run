@@ -1,3 +1,8 @@
+/**
+ * By SzagOt 
+ * Daniel Bispo <szagot@gmail.com>
+ * 2022
+ */
 (function (d, w, audio, gN, yS, bS, tN, tD) {
     const board = d.querySelector('.game-board');
     const mario = d.querySelector('.mario');
@@ -464,7 +469,6 @@
     d.addEventListener('keydown', jump);
     // Quando um toque na tela é detectado
     board.addEventListener('touchstart', jump);
-    // Quando há um click do mouse
 
     // Seta pontuação máxima
     maxScoreElement.innerHTML = completeZeros(maxScore, 4);

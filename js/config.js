@@ -1,3 +1,9 @@
+/**
+ * By SzagOt 
+ * Daniel Bispo <szagot@gmail.com>
+ * 2022
+ */
+
 // O nome define a base de pontuação máxima
 const gameName = 'marioRunGost';
 // A cada quantos pontos o Yoshi ficará disponível
