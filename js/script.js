@@ -463,7 +463,7 @@
     // Quando uma tecla é pressionada
     d.addEventListener('keydown', jump);
     // Quando um toque na tela é detectado
-    d.addEventListener('touchstart', jump);
+    board.addEventListener('touchstart', jump);
     // Quando há um click do mouse
 
     // Seta pontuação máxima
@@ -471,8 +471,12 @@
 
     // Botões
     maxScoreElement.addEventListener('click', () => {
-        localStorage.removeItem(gameName);
-        maxScoreElement.innerHTML = '0000';
+        if (!started || !init) {
+            localStorage.setItem(gameName, 0);
+            maxScoreElement.innerHTML = '0000';
+            
+            clearScreen();
+        }
     })
     btn.addEventListener('click', clearScreen);
     start.addEventListener('click', jump);
