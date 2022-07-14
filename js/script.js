@@ -479,6 +479,8 @@
             maxScoreElement.innerHTML = '0000';
 
             clearScreen();
+        } else {
+            return false;
         }
     })
     btn.addEventListener('click', clearScreen);
