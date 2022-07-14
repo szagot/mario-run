@@ -472,9 +472,12 @@
     // Botões
     maxScoreElement.addEventListener('click', () => {
         if (!started || !init) {
-            localStorage.setItem(gameName, 0);
+            score = 0;
+            maxScore = 0;
+            w.localStorage.setItem(gN, maxScore);
+            scoreElement.innerHTML = '0000';
             maxScoreElement.innerHTML = '0000';
-            
+
             clearScreen();
         }
     })
