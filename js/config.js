@@ -13,6 +13,10 @@ const bowserScore = 20;
 // Após quantos segundos fica de noite? E de dia?
 const turnNight = 30000;
 const turnDay = 20000;
+// Geração de objetos
+const minGen = 10;
+const maxGen = 50;
+const maxGenNight = 200;
 
 /**
  * Prepara um áudio para ser executado

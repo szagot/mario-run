@@ -3,7 +3,7 @@
  * Daniel Bispo <szagot@gmail.com>
  * 2022
  */
-(function (d, w, audio, gN, yS, bS, tN, tD) {
+(function (d, w, audio, gN, yS, bS, tN, tD, minG, maxG, maxGN) {
     const board = d.querySelector('.game-board');
     const mario = d.querySelector('.mario');
     const pipe = d.querySelector('.pipe');
@@ -271,7 +271,7 @@
      * Controlador da posição do Mario em relação ao cano
      */
     const startGame = () => {
-        let qt = getRandomNumberBetween(10, 100);
+        let qt = getRandomNumberBetween(minG, maxG);
         loop = w.setInterval(() => {
             // Se houve game-over ou ainda não foi iniciado, não faz nada
             if (finished || !init) {
@@ -281,8 +281,10 @@
             // Pontuação
             scoreElement.innerHTML = completeZeros(score, 4);
 
+            // Posições
             let pipePosition = pipe.offsetLeft;
             const marioPosition = +w.getComputedStyle(mario).bottom.replace('px', '');
+            var screenWidth = w.innerWidth || d.documentElement.clientWidth || d.body.clientWidth;
 
             // Situação de game over
             if ((pipePosition < 120 && pipePosition > 0 && marioPosition < 100) || ghostOver) {
@@ -376,15 +378,15 @@
             }
 
             // Criando Moedas! (ou fantasmas, ovos, etc...)
-            if (coinIndex >= qt && !finished && init) {
-                qt = getRandomNumberBetween(10, isNight ? 300 : 80);
+            if (coinIndex >= qt && !finished && init && pipePosition > screenWidth * .1 && pipePosition < screenWidth * .9) {
+                qt = getRandomNumberBetween(minG, isNight ? maxGN : maxG);
                 coinIndex = 0;
                 const coin = d.createElement('img');
                 coin.src = 'img/coin.png';
                 coin.classList.add('coin');
-                const isBetter = getRandomNumberBetween(1, 3) % 2 == 0;
+                const isBetter = isNight ? (getRandomNumberBetween(1, 3) % 2 != 0) : (getRandomNumberBetween(1, 3) % 2 == 0);
                 coin.style.bottom = isBetter ? '200px' : '50px';
-                if (isBetter && qt > 70 && !isNight) {
+                if (isBetter && !isNight && qt > (maxG / 2) && pipePosition > screenWidth * .3 && pipePosition < screenWidth * .6) {
                     coin.src = 'img/yoshi-coin.gif';
                     coin.classList.add('yoshi-coin');
                 }
@@ -492,4 +494,4 @@
 
     startGame();
 
-})(document, window, prepareAudio, gameName, yoshiScore, bowserScore, turnNight, turnDay);
+})(document, window, prepareAudio, gameName, yoshiScore, bowserScore, turnNight, turnDay, minGen, maxGen, maxGenNight);
