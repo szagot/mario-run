@@ -1,6 +1,7 @@
 # Mario Run
 
 ![Screenshot](img/readme.jpg)
+![Screenshot](img/readme2.jpg)
 
 Jogo simples no estilo Chrome Dino (aquele do seu navegador quando a internet cai) com a temática do Mario Bros feito usando apenas CSS e Javascript básicos.
 
@@ -15,16 +16,16 @@ Caso queira ver o jogo em ação, **ligue o som** e click na sua versão preferi
 
 |                                                     Imagem                                                     | Descrição                                                                                                                                                                                                                                            |
 |:--------------------------------------------------------------------------------------------------------------:|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|                               <img src="img/coin.png" alt="Moeda" width="20" />                                | A moeda concede 1 ponto quando você a pega. Se estiver no alto, concede 2 pontos                                                                                                                                                                     |
+|                               <img src="img/coin.png" alt="Moeda" width="20" />                                | A moeda concede 1 ponto quando você a pega. Se a moeda estiver no alto, concede 2 pontos                                                                                                                                                             |
 |                        <img src="img/yoshi-coin.gif" alt="Moeda do Yoshi" width="40" />                        | A moeda do Yoshi concede 5 pontos para você.                                                                                                                                                                                                         |
-|                              <img src="img/egg-yoshi.gif" alt="Ovo" width="60" />                              | Após conseguir pelo menos 30 pontos, em algum momento aparecerá esse ovo. Ao pegar, o Mário ganha o Yoshi!                                                                                                                                           |
+|                              <img src="img/egg-yoshi.gif" alt="Ovo" width="60" />                              | Após conseguir alguns pontos, em algum momento aparecerá esse ovo. Ao pegar, o Mário ganha o Yoshi!                                                                                                                                                  |
 |                       <img src="img/mario-yoshi.gif" alt="Mario com Yoshi" width="80" />                       | Quando o Mário estiver com o Yoshi, todo ponto será dobrado! E se bater em algo (Canos ou Fantasmas) em vez de ser penalizado, você perde o Yoshi.                                                                                                   |
 | <img src="img/pipe.png" alt="Cano" width="40" /><img src="img/bowser.gif" alt="Mario com Yoshi" width="50"  /> | Tanto o cano como o Bowser são obstáculos. Se bater neles o jogo acaba (a menos que esteja com o Yoshi). O Bowser aparece de vez em quando, mas ele é bem rápido, cuidado!                                                                           |
 |                              <img src="img/boo.gif" alt="Fantasma" width="80" />                               | Quando fica de noite, os fantasmas aparecem. Tocar neles fará com que você perca 1 ponto (e se estiver com o Yoshi, também perde ele... o Yoshi morre de medo de fantasmas! Mas tudo bem, o Bowser também não gosta, e por isso nem aparece a noite) |
 
 ---
 
-A pontuação atual fica no canto superior direito da tela. Ao passo que no centro da tela, no alto, fica sua pontuação máxima. Se tocar ou clicar nela, a pontuação máxima é zerada.
+A pontuação atual fica no canto superior esquerdo da tela. Ao passo que no centro da tela, no alto, fica sua pontuação máxima. Para zerar a pontuação máxima, basta tocar/clicar nela.
 
 Enjoy! :)
 
