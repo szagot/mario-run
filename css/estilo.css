@@ -35,7 +35,7 @@
 .game-over {
     opacity: 0;
     position: absolute;
-    top: calc(50% - 100px);
+    top: calc(50% - 50px);
     left: calc(50% - 257px);
     transition: opacity 1s ease;
     z-index: 8;
@@ -45,7 +45,7 @@
 .start {
     opacity: 0;
     position: absolute;
-    top: 50%;
+    top: calc(50% + 50px);
     left: calc(50% - 50px);
     width: 100px;
     padding: 5px;
@@ -63,6 +63,7 @@
 
 .start {
     opacity: 1;
+    top: 50%;
     border: 1px solid #24a02a;
     background: linear-gradient(#33f54d, #d3ffdc);
     color: #145728;
@@ -72,9 +73,9 @@
 
 .block {
     position: absolute;
-    right: 110px;
+    right: 90px;
     top: 10px;
-    width: 40px;
+    width: 30px;
     z-index: 2;
 }
 
@@ -82,22 +83,21 @@
 .max-score {
     position: absolute;
     right: 20px;
-    top: 12px;
-    font: bold 35px Arial, sans-serif;
+    top: 10px;
+    font: bold 28px Arial, sans-serif;
     color: #fff;
     text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, -1px 1px 2px #000, 1px -1px 2px #000;
     z-index: 2;
 }
 
 .max-score {
-    width: 90px;
+    width: 80px;
     text-align: center;
-    top: 10px;
-    right: calc(50% - 45px);
+    right: calc(50% - 40px);
     padding: 0 5px;
-    border: 1px solid #000;
-    outline: 5px solid #5ca9f9;
-    box-shadow: 5px 5px 5px #000, -5px -5px 5px #000, -5px 5px 5px #000, 5px -5px 5px #000;
+    border: 1px solid rgba(0, 0, 0, 0.6);
+    outline: 4px solid #5ca9f9;
+    box-shadow: 4px 4px 10px #000, -4px -4px 10px #000, -4px 4px 10px #000, 4px -4px 10px #000;
     border-radius: 5px;
     cursor: pointer;
     z-index: 999;
@@ -134,13 +134,13 @@
 .pipe {
     position: absolute;
     bottom: 0;
-    width: 80px;
-    right: -80px;
+    width: 60px;
+    right: -60px;
     z-index: 3;
 }
 
 .pipe-run {
-    animation: pipe-animation 2s infinite linear;
+    animation: pipe-animation 1.8s infinite linear;
 }
 
 .bowser-run {
@@ -151,14 +151,15 @@
     opacity: 0;
     position: absolute;
     bottom: 0;
-    width: 150px;
+    width: 120px;
+    margin-left: 20px;
     transition: opacity 1s ease;
     z-index: 4;
 }
 
 .mario.over {
-    width: 75px;
-    margin-left: 50px;
+    width: 60px;
+    margin-left: 65px;
 }
 
 .mario-show {
@@ -166,7 +167,7 @@
 }
 
 .jump {
-    animation: jump-animation 600ms ease-out;
+    animation: jump-animation 500ms ease-out;
 }
 
 .game-over-mario {
@@ -177,23 +178,24 @@
 .egg {
     position: absolute;
     opacity: 1;
-    width: 23px;
+    width: 20px;
     bottom: 200px;
     right: -200px;
-    animation: pipe-animation 2s linear;
+    animation: pipe-animation 1.8s linear;
     z-index: 2;
 }
 
 .egg {
     width: 80px;
-    bottom: 200px;
+    bottom: 150px;
 }
 
 .yoshi-coin {
     position: absolute;
     opacity: 1;
-    width: 50px;
-    bottom: 180px !important;
+    margin-right: -20px;
+    width: 40px;
+    bottom: 140px !important;
     z-index: 2;
 }
 
@@ -203,11 +205,11 @@
 
 @keyframes pipe-animation {
     from {
-        right: -160px;
+        right: -120px;
     }
 
     to {
-        right: calc(100% + 80px);
+        right: calc(100% + 60px);
     }
 }
 
@@ -217,11 +219,11 @@
     }
 
     40% {
-        bottom: 180px;
+        bottom: 150px;
     }
 
     60% {
-        bottom: 180px;
+        bottom: 150px;
     }
 
     100% {
