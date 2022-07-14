@@ -24,7 +24,7 @@ Caso queira ver o jogo em ação, **ligue o som** e click na sua versão preferi
 
 ---
 
-A pontuação atual fica no canto superior direito da tela. Ao paso que no centro da tela, no alto, fica sua pontuação máxima. Se tocar ou clicar nela, a pontuação máxima é zerada.
+A pontuação atual fica no canto superior direito da tela. Ao passo que no centro da tela, no alto, fica sua pontuação máxima. Se tocar ou clicar nela, a pontuação máxima é zerada.
 
 Enjoy! :)
 

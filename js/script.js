@@ -57,6 +57,7 @@
         yoshiMusic.pause();
 
         // Mário
+        bowserChanging = false;
         mario.classList.remove('mario-show');
         w.setTimeout(() => {
             mario.src = 'img/mario.gif';
@@ -452,7 +453,7 @@
             }
 
             // Trocando pipe pelo bowser
-            if ((score % bS == 0 || (score + 1) % bS == 0) && pipe.offsetLeft <= -80) {
+            if ((score % bS == 0 || (score + 1) % bS == 0) && score > 10 && pipe.offsetLeft <= -80) {
                 bowser();
             }
 
