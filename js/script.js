@@ -281,7 +281,7 @@
             const marioPosition = +w.getComputedStyle(mario).bottom.replace('px', '');
 
             // Situação de game over
-            if ((pipePosition < 120 && pipePosition > 0 && marioPosition < 70) || ghostOver) {
+            if ((pipePosition < 120 && pipePosition > 0 && marioPosition < 77) || ghostOver) {
                 // Tá com o Yoshi?
                 if (yoshi && !ghostOver) {
                     // Perde o Yoshi
