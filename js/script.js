@@ -125,7 +125,12 @@
             // Prossegue apenas se o jogo estiver em execução
             if (!finished && init) {
                 night.classList.add('mario-show');
+                pipe.style.opacity = '0';
                 isNight = true;
+                w.setTimeout(() =>{
+                    pipe.style.right = '70%';
+                    pipe.classList.remove('pipe-run');
+                },1000)
                 if (yoshi) {
                     yoshiMusic.pause();
                 } else {
@@ -137,6 +142,8 @@
                     // Prossegue apenas se o jogo estiver em execução
                     if (!finished && init) {
                         night.classList.remove('mario-show');
+                        pipe.style.opacity = '1';
+                        pipe.classList.add('pipe-run');
                         isNight = false;
                         nightMusic.pause();
                         if (yoshi) {
@@ -287,7 +294,7 @@
             var screenWidth = w.innerWidth || d.documentElement.clientWidth || d.body.clientWidth;
 
             // Situação de game over
-            if ((pipePosition < 120 && pipePosition > 0 && marioPosition < 100) || ghostOver) {
+            if ((!isNight && pipePosition < 120 && pipePosition > 0 && marioPosition < 100) || ghostOver) {
                 // Tá com o Yoshi?
                 if (yoshi && !ghostOver) {
                     // Perde o Yoshi
@@ -419,7 +426,7 @@
                         (audio(isBoo ? 'boo-coin.mp3' : (isyoshiCoin ? 'yoshi-coin.mp3' : (coinBetter ? 'coin2.mp3' : 'coin.mp3')))).play();
                         // Se for noite, tira pontos
                         if (isBoo) {
-                            score--;
+                            score -= yoshi ? 1 : 2;
                             if (score <= 0) {
                                 ghostOver = true;
                             } else if (yoshi) {
