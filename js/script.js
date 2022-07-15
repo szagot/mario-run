@@ -27,6 +27,7 @@
     let nightStarted;
     let dayStarted;
     let ghostOver = false;
+    let yesNo = true;
 
     // Audio: Fundo
     const music = audio('runing.mp3', true);
@@ -127,10 +128,10 @@
                 night.classList.add('mario-show');
                 pipe.style.opacity = '0';
                 isNight = true;
-                w.setTimeout(() =>{
-                    pipe.style.right = '70%';
+                w.setTimeout(() => {
                     pipe.classList.remove('pipe-run');
-                },1000)
+                    pipe.style.right = '70%';
+                }, 1000)
                 if (yoshi) {
                     yoshiMusic.pause();
                 } else {
@@ -142,6 +143,7 @@
                     // Prossegue apenas se o jogo estiver em execução
                     if (!finished && init) {
                         night.classList.remove('mario-show');
+                        pipe.style.right = '-100px';
                         pipe.style.opacity = '1';
                         pipe.classList.add('pipe-run');
                         isNight = false;
@@ -387,7 +389,7 @@
             }
 
             // Criando Moedas! (ou fantasmas, ovos, etc...)
-            if (coinIndex >= qt && !finished && init && pipePosition > screenWidth * .1 && pipePosition < screenWidth * .9) {
+            if (coinIndex >= qt && !finished && init && pipePosition > screenWidth * .1 && pipePosition < screenWidth * .8) {
                 qt = getRandomNumberBetween(minG, isNight ? maxGN : maxG);
                 coinIndex = 0;
                 const coin = d.createElement('img');
@@ -405,7 +407,11 @@
                     coin.src = 'img/boo.gif';
                     coin.classList.add('boo-coin');
                 }
-                board.appendChild(coin);
+                // Se for de noite só adiciona metade da quantidade de fantasmas
+                if (isNight && yesNo) {
+                    board.appendChild(coin);
+                    yesNo = !yesNo;
+                }
             }
             coinIndex++;
 
