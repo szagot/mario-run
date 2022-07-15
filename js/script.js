@@ -398,7 +398,7 @@
                 const coin = d.createElement('img');
                 coin.src = 'img/coin.png';
                 coin.classList.add('coin');
-                const isBetter = isNight ? (getRandomNumberBetween(1, 2) % 2 != 0) : (getRandomNumberBetween(1, 3) % 2 == 0);
+                const isBetter = getRandomNumberBetween(1, 3) % 2 == 0;
                 coin.style.bottom = isBetter ? '200px' : '50px';
                 // Verificando se já tem uma moeda Yoshi na tela antes de trocar
                 const hasYoshi = d.querySelector('.yoshi-coin');
@@ -425,11 +425,11 @@
                 const coinBottom = +w.getComputedStyle(coinElement).bottom.replace('px', '');
                 const isyoshiCoin = coinElement.classList.contains("yoshi-coin");
                 const isBoo = coinElement.classList.contains('boo-coin');
-                if (coinLeft <= 0 || (coinLeft < 130 && coinLeft > 20 && coinBottom > marioPosition && coinBottom < (marioPosition + 120))) {
+                if (coinLeft <= -70 || (coinLeft < 130 && coinLeft > 5 && coinBottom > marioPosition && coinBottom < (marioPosition + 120))) {
                     board.removeChild(coinElement);
 
                     // Se não passou do mário, computa a pontuação
-                    if (coinLeft > 0) {
+                    if (coinLeft > 5) {
                         let coinBetter = (coinBottom > 50);
                         // Som
                         (audio(isBoo ? 'boo-coin.mp3' : (isyoshiCoin ? 'yoshi-coin.mp3' : (coinBetter ? 'coin2.mp3' : 'coin.mp3')))).play();
