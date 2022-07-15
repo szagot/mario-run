@@ -303,7 +303,9 @@
                         pipe.style.right = '-100px';
                         pipe.style.left = 'auto';
                         w.setTimeout(() => {
-                            pipe.classList.add('pipe-run');
+                            if (!bowserChanging) {
+                                pipe.classList.add('pipe-run');
+                            }
                         }, 1000);
                     }, 500);
                 } else {
@@ -384,9 +386,11 @@
                 const coin = d.createElement('img');
                 coin.src = 'img/coin.png';
                 coin.classList.add('coin');
-                const isBetter = isNight ? (getRandomNumberBetween(1, 3) % 2 != 0) : (getRandomNumberBetween(1, 3) % 2 == 0);
+                const isBetter = isNight ? (getRandomNumberBetween(1, 2) % 2 != 0) : (getRandomNumberBetween(1, 3) % 2 == 0);
                 coin.style.bottom = isBetter ? '200px' : '50px';
-                if (isBetter && !isNight && qt > (maxG / 2) && pipePosition > screenWidth * .3 && pipePosition < screenWidth * .6) {
+                // Verificando se já tem uma moeda Yoshi na tela antes de trocar
+                const hasYoshi = d.querySelector('.yoshi-coin');
+                if (!hasYoshi && isBetter && !isNight && qt > (maxG / 2) && pipePosition > screenWidth * .3 && pipePosition < screenWidth * .6) {
                     coin.src = 'img/yoshi-coin.gif';
                     coin.classList.add('yoshi-coin');
                 }
@@ -405,7 +409,7 @@
                 const coinBottom = +w.getComputedStyle(coinElement).bottom.replace('px', '');
                 const isyoshiCoin = coinElement.classList.contains("yoshi-coin");
                 const isBoo = coinElement.classList.contains('boo-coin');
-                if (coinLeft <= 0 || (coinLeft < 130 && coinBottom > marioPosition && coinBottom < (marioPosition + 120))) {
+                if (coinLeft <= 0 || (coinLeft < 130 && coinLeft > 20 && coinBottom > marioPosition && coinBottom < (marioPosition + 120))) {
                     board.removeChild(coinElement);
 
                     // Se não passou do mário, computa a pontuação
