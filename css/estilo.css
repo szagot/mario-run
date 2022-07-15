@@ -142,7 +142,7 @@
 }
 
 .pipe-run {
-    animation: pipe-animation 2s infinite linear;
+    animation: pipe-animation 1.9s infinite linear;
 }
 
 .bowser-run {
@@ -182,7 +182,7 @@
     width: 23px;
     bottom: 200px;
     right: -200px;
-    animation: pipe-animation 2s linear;
+    animation: pipe-animation 1.9s linear;
     z-index: 2;
 }
 

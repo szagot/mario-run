@@ -16,7 +16,7 @@ const turnDay = 15000;
 // Geração de objetos
 const minGen = 10;
 const maxGen = 50;
-const maxGenNight = 100;
+const maxGenNight = 80;
 
 /**
  * Prepara um áudio para ser executado

@@ -56,6 +56,7 @@
         // Noite
         night.classList.remove('mario-show');
         isNight = false;
+        yesNo = true;
 
         // Músicas
         music.pause();
@@ -75,7 +76,7 @@
         // Cano
         pipe.src = 'img/pipe.png';
         pipe.style.left = 'auto';
-        pipe.style.right = '-100px';
+        pipe.style.right = '-160px';
         pipe.style.bottom = '0';
         pipe.classList.remove('pipe-run');
         pipe.classList.remove('bowser-run');
@@ -143,9 +144,11 @@
                     // Prossegue apenas se o jogo estiver em execução
                     if (!finished && init) {
                         night.classList.remove('mario-show');
-                        pipe.style.right = '-100px';
+                        pipe.style.right = '-160px';
                         pipe.style.opacity = '1';
-                        pipe.classList.add('pipe-run');
+                        w.setTimeout(() => {
+                            pipe.classList.add('pipe-run');
+                        }, 1000);
                         isNight = false;
                         nightMusic.pause();
                         if (yoshi) {
@@ -257,7 +260,7 @@
         bowserAudio.play();
         pipe.src = 'img/bowser.gif';
         pipe.classList.remove('pipe-run');
-        pipe.style.right = '-100px';
+        pipe.style.right = '-160px';
         pipe.style.bottom = '10px';
         w.setTimeout(() => {
             pipe.classList.add('bowser-run');
@@ -265,7 +268,7 @@
                 if (!finished) {
                     pipe.src = 'img/pipe.png';
                     pipe.classList.remove('bowser-run');
-                    pipe.style.right = '-100px';
+                    pipe.style.right = '-160px';
                     pipe.style.bottom = '0px';
                     w.setTimeout(() => {
                         bowserChanging = false;
@@ -304,12 +307,12 @@
 
                     // Remove obstáculos para não dar game-over do mesmo jeito
                     pipe.classList.remove('pipe-run');
-                    pipe.style.left = '-100px';
-                    pipePosition = -100;
+                    pipe.style.left = '-160px';
+                    pipePosition = -160;
                     pipe.src = 'img/pipe.png';
                     // Recoloca obstáculos
                     w.setTimeout(() => {
-                        pipe.style.right = '-100px';
+                        pipe.style.right = '-160px';
                         pipe.style.left = 'auto';
                         w.setTimeout(() => {
                             if (!bowserChanging) {
@@ -408,10 +411,10 @@
                     coin.classList.add('boo-coin');
                 }
                 // Se for de noite só adiciona metade da quantidade de fantasmas
-                if (isNight && yesNo) {
+                if (!isNight || yesNo) {
                     board.appendChild(coin);
-                    yesNo = !yesNo;
                 }
+                yesNo = !yesNo;
             }
             coinIndex++;
 
