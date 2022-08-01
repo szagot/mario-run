@@ -161,6 +161,7 @@
 .mario.over {
     width: 75px;
     margin-left: 50px;
+    transition: bottom 300ms ease;
 }
 
 .mario-show {
@@ -169,10 +170,6 @@
 
 .jump {
     animation: jump-animation 600ms ease-out;
-}
-
-.game-over-mario {
-    transition: bottom 300ms ease;
 }
 
 .coin,

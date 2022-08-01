@@ -53,6 +53,7 @@
         // Stop/Pause no audio
         stopAudio(reset = true) {
             if (this.isPlaing) {
+                this.isPlaing = false;
                 this.audio.pause();
                 if (reset) {
                     this.audio.currentTime = 0;
@@ -85,12 +86,40 @@
 
             this.playAudio();
             this.element.classList.add('jump');
-            setTimeout(() => this.element.classList.remove('jump'), 600);
+            w.setTimeout(() => this.element.classList.remove('jump'), 600);
         }
 
-        gameOver(){
-            // TODO
-            this.element.src = '';
+        gameOver() {
+            this.element.src = 'img/game-over.png';
+            this.calcMaths();
+            this.element.style.bottom = this.bottom + 'px';
+            this.element.classList.remove('jump');
+            (new Audio('audio/game-over.mp3')).play();
+            this.element.classList.add('over');
+            w.setTimeout(() => {
+                this.element.style.bottom = '200px';
+
+                w.setTimeout(() => {
+                    this.element.style.bottom = '-200px';
+
+                    w.setTimeout(() => {
+                        started = false;
+                        this.restart();
+                    }, 300);
+                }, 300);
+            }, 800);
+        }
+
+        restart() {
+            this.hide();
+            this.element.src = 'img/mario.gif';
+            this.element.classList.remove('over');
+        }
+
+        show() {
+            this.element.style.bottom = '0';
+            this.element.style.opacity = '1';
+            this.visible = true;
         }
     }
 
@@ -111,9 +140,9 @@
         }
 
         stop() {
-            this.element.classList.remove('pipe-run');
             this.calcMaths();
-            this.element.style.right = this.right;
+            this.element.classList.remove('pipe-run');
+            this.element.style.right = this.right + 'px';
         }
     }
 
@@ -133,7 +162,6 @@
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
-    let started = false;
     const start = (board, mario, pipe) => {
         if (started) {
             return;
@@ -143,8 +171,21 @@
         mario.show();
         pipe.run();
         started = true;
+
+        const loop = w.setInterval(() => {
+            pipe.calcMaths();
+            mario.calcMaths();
+            // Game over?
+            if (pipe.left < 120 && mario.bottom < 100 && pipe.left > 10) {
+                pipe.stop();
+                board.stopAudio();
+                mario.gameOver();
+                clearInterval(loop);
+            }
+        }, 10);
     }
 
+    let started = false;
     const board = new Stats('.game-board', 'runing.mp3', true);
     const mario = new MarioStats();
     const pipe = new PipeStats();
