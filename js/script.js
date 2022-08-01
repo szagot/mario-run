@@ -29,6 +29,7 @@
         // Calula medidas
         calcMaths() {
             this.left = this.element.offsetLeft;
+            this.right = +w.getComputedStyle(this.element).right.replace('px', '');
             this.bottom = +w.getComputedStyle(this.element).bottom.replace('px', '');
             this.width = this.element.offsetWidth;
             this.height = this.element.offsetHeight;
@@ -72,6 +73,49 @@
         }
     };
 
+    class MarioStats extends Stats {
+        constructor() {
+            super('.mario', 'jump.mp3', false, false);
+        }
+
+        jump() {
+            if (this.element.classList.contains('jump')) {
+                return;
+            }
+
+            this.playAudio();
+            this.element.classList.add('jump');
+            setTimeout(() => this.element.classList.remove('jump'), 600);
+        }
+
+        gameOver(){
+            // TODO
+            this.element.src = '';
+        }
+    }
+
+    class PipeStats extends Stats {
+        constructor() {
+            super('.pipe', null, false, false);
+        }
+
+        run() {
+            if (this.element.classList.contains('pipe-run')) {
+                return;
+            }
+
+            this.element.style.right = '-80px;';
+            if (!this.visible)
+                this.show();
+            this.element.classList.add('pipe-run');
+        }
+
+        stop() {
+            this.element.classList.remove('pipe-run');
+            this.calcMaths();
+            this.element.style.right = this.right;
+        }
+    }
 
     /**
      * Adiciona zeros à esquerda de um número
@@ -89,43 +133,34 @@
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
+    let started = false;
+    const start = (board, mario, pipe) => {
+        if (started) {
+            return;
+        }
 
-    /**
-     * Tabuleiro
-     * @return {Stats}
-     */
-    const getBoard = () => {
-        const stats = new Stats('.game-board', 'runing.mp3', true);
-
-        return stats;
+        board.playAudio();
+        mario.show();
+        pipe.run();
+        started = true;
     }
 
-    /**
-     * Mario
-     * @return {Stats}
-     */
-    const getMario = () => {
-        const stats = new Stats('.mario', 'jump.mp3', false, false);
-
-        return stats;
-    }
-
-    const board = getBoard();
-    const mario = getMario();
-
-    console.log(board);
-    console.log(mario);
+    const board = new Stats('.game-board', 'runing.mp3', true);
+    const mario = new MarioStats();
+    const pipe = new PipeStats();
 
     window.addEventListener('resize', () => {
         board.calcMaths();
-        console.log(board);
     });
 
     window.addEventListener('keydown', (event) => {
         if (event.key === ' ' || event.key === 'ArrowUp') {
-            mario.playAudio();
-            board.playAudio();
+            started ? mario.jump() : start(board, mario, pipe);
         }
+    });
+
+    window.addEventListener('touchstart', () => {
+        started ? mario.jump() : start(board, mario, pipe);
     });
 
     // // Audio: Fundo
