@@ -3,7 +3,7 @@
  * Daniel Bispo <szagot@gmail.com>
  * 2022
  */
-(function (gameName, d, w) {
+(function (gameName, yoshiScore, d, w) {
     /**
      * Inicializa um audio
      */
@@ -12,22 +12,6 @@
         audioFile.volume = vol;
         audioFile.preload = 'auto';
         return audioFile;
-    }
-
-    /**
-     * Adiciona zeros à esquerda de um número
-     */
-    const completeZeros = (num, size) => {
-        var s = num + '';
-        while (s.length < size) s = '0' + s;
-        return s;
-    }
-
-    /**
-     * Retorna um número randômico entre min e max
-     */
-    const getRandomNumberBetween = (min, max) => {
-        return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
     /**
@@ -122,12 +106,123 @@
     class BoardStats extends Stats {
         constructor() {
             super('.game-board', runing, true);
+            this.scoreElement = d.querySelector('.score');
+            this.maxScoreElement = d.querySelector('.max-score');
+            this.score = 0;
+            this.maxScore = 0;
+            this.isNight = false;
+            this.started = false;
+            this.persistScores();
+            this.generateCoinControl();
         }
+
+        start() {
+            this.started = true;
+        }
+
+        gameOver() {
+            this.started = false;
+        }
+
+        /**
+         * Gera um novo número pra o controle de moedas
+         */
+        generateCoinControl() {
+            this.minG = 10;
+            this.maxG = this.isNight ? 80 : 50;
+            this.coinControl = this.getRandomNumberBetween(this.minG, this.maxG);
+            this.coinIndex = 0;
+            this.ghostPermit = true;
+        }
+
+        /**
+         * Adiciona zeros à esquerda de um número
+         */
+        completeZeros(num, size) {
+            var s = num + '';
+            while (s.length < size) s = '0' + s;
+            return s;
+        }
+
+        /**
+         * Retorna um número randômico entre min e max
+         */
+        getRandomNumberBetween(min, max) {
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        }
+
+        /**
+         * Soma pontuação
+         */
+        sumScores(score = 1) {
+            this.score += score;
+            if (this.maxScore < this.score)
+                this.maxScore = this.score;
+            this.scoreElement.innerHTML = this.completeZeros(this.score, 4);
+        }
+
+        /**
+         * Grava pontuação máxima
+         */
+        persistScores() {
+            const actualMaxScores = w.localStorage.getItem('maxScores') || 0;
+            if (this.maxScore > actualMaxScores)
+                w.localStorage.setItem('maxScores', this.maxScore);
+            else
+                this.maxScore = actualMaxScores;
+
+            this.maxScoreElement.innerHTML = this.completeZeros(this.maxScore, 4);
+        }
+
+        /**
+         * Objeto PipeStats
+         * @param {MarioStats} mario 
+         * @param {PipeStats} pipe 
+         */
+        generateCoin(mario, pipe) {
+            this.coinIndex++;
+            if (this.coinIndex >= this.coinControl && this.started && pipe.left > this.width * .1 && pipe.left < this.width * .8) {
+                this.generateCoinControl();
+                const isBetter = this.getRandomNumberBetween(1, 3) % 2 == 0;
+                // Verificando se já tem uma moeda Yoshi na tela antes de trocar
+                const hasYoshi = d.querySelector('.yoshi-coin');
+                const coin = d.createElement('img');
+                coin.src = 'img/coin.png';
+                coin.classList.add('coin');
+                coin.style.bottom = isBetter ? '200px' : '50px';
+
+                if (!hasYoshi && isBetter && !this.isNight && this.coinControl > (this.maxG / 2) && pipe.left > this.width * .3 && pipe.left < this.width * .6) {
+                    coin.src = 'img/yoshi-coin.gif';
+                    coin.classList.add('yoshi-coin');
+                }
+                if (this.isNight) {
+                    coin.src = 'img/boo.gif';
+                    coin.classList.add('boo-coin');
+                }
+                // Se for de noite só adiciona metade da quantidade de fantasmas
+                if (!this.isNight || this.ghostPermit) {
+                    this.element.appendChild(coin);
+                }
+                this.ghostPermit = !this.ghostPermit;
+            }
+
+            // Criando ovo do Yoshi se não for de noite
+            let eggElement = d.querySelector('.egg');
+            if (!this.isNight && !eggElement && !mario.isYoshi && this.score > 0 && (this.score % yoshiScore == 0 || (this.score + 1) % yoshiScore == 0)) {
+                const egg = d.createElement('img');
+                egg.src = 'img/egg-yoshi.gif';
+                egg.classList.add('egg');
+                this.element.appendChild(egg);
+            }
+        }
+
+
     }
 
     class MarioStats extends Stats {
         constructor() {
             super('.mario', jump, false, false);
+            this.isYoshi = false;
         }
 
         jump() {
@@ -154,7 +249,7 @@
                     this.element.style.bottom = '-200px';
 
                     w.setTimeout(() => {
-                        started = false;
+                        board.gameOver();
                         this.restart();
                     }, 300);
                 }, 300);
@@ -196,17 +291,16 @@
             this.element.style.right = this.right + 'px';
         }
     }
-    
+
     /**
      * Variáveis de baase
      */
-    let started = false;
     const board = new BoardStats();
     const mario = new MarioStats();
     const pipe = new PipeStats();
     const preStart = () => {
         // Se já iniciou, executa o pulo, senão inicia
-        started ? mario.jump() : start(board, mario, pipe);
+        board.started ? mario.jump() : start(board, mario, pipe);
     }
 
     /**
@@ -214,26 +308,28 @@
      * @returns 
      */
     const start = (board, mario, pipe) => {
-        if (started) {
+        if (board.started) {
             return;
         }
 
         board.playAudio();
         mario.show();
         pipe.run();
-        started = true;
+        board.start();
 
         const loop = w.setInterval(() => {
             // Recalcula medidas e posições
             board.calcMaths();
             pipe.calcMaths();
             mario.calcMaths();
+            board.generateCoin(mario, pipe);
 
             // Game over?
             if (pipe.left < 120 && mario.bottom < 100 && pipe.left > 10) {
                 pipe.stop();
                 board.stopAudio();
                 mario.gameOver();
+                board.gameOver();
                 clearInterval(loop);
             }
         }, 10);
@@ -251,4 +347,4 @@
         preStart();
     });
 
-})('marioRunGost', document, window);
+})('marioRunGost', 35, document, window);
