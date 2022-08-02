@@ -27,8 +27,8 @@
     const bowserLaugh = audio('audio/bowser-laugh.wav', vol);
     const yoshi = audio('audio/yoshi.wav', vol);
     const yoshiOff = audio('audio/yoshi-off.wav', vol);
-    const coin = audio('audio/coin2.mp3', vol);
-    const coinHigh = audio('audio/coin.mp3', vol);
+    const coin = audio('audio/coin.mp3', vol);
+    const coinHigh = audio('audio/coin2.mp3', vol);
     const coinBoo = audio('audio/boo-coin.mp3', vol);
     const coinYoshi = audio('audio/yoshi-coin.mp3', vol);
 
@@ -113,7 +113,7 @@
             this.isNight = false;
             this.started = false;
             this.persistScores();
-            this.generateCoinControl();
+            this.generateCoinRandom();
         }
 
         start() {
@@ -122,15 +122,16 @@
 
         gameOver() {
             this.started = false;
+            this.persistScores();
         }
 
         /**
          * Gera um novo número pra o controle de moedas
          */
-        generateCoinControl() {
+        generateCoinRandom() {
             this.minG = 10;
             this.maxG = this.isNight ? 80 : 50;
-            this.coinControl = this.getRandomNumberBetween(this.minG, this.maxG);
+            this.coinRandom = this.getRandomNumberBetween(this.minG, this.maxG);
             this.coinIndex = 0;
             this.ghostPermit = true;
         }
@@ -154,8 +155,12 @@
         /**
          * Soma pontuação
          */
-        sumScores(score = 1) {
-            this.score += score;
+        sumScore(score = 1, isGhost = false) {
+            if (isGhost) {
+                this.score -= score;
+            } else {
+                this.score += score;
+            }
             if (this.maxScore < this.score)
                 this.maxScore = this.score;
             this.scoreElement.innerHTML = this.completeZeros(this.score, 4);
@@ -179,10 +184,10 @@
          * @param {MarioStats} mario 
          * @param {PipeStats} pipe 
          */
-        generateCoin(mario, pipe) {
+        coinControl(mario, pipe) {
             this.coinIndex++;
-            if (this.coinIndex >= this.coinControl && this.started && pipe.left > this.width * .1 && pipe.left < this.width * .8) {
-                this.generateCoinControl();
+            if (this.coinIndex >= this.coinRandom && this.started && pipe.left > this.width * .1 && pipe.left < this.width * .8) {
+                this.generateCoinRandom();
                 const isBetter = this.getRandomNumberBetween(1, 3) % 2 == 0;
                 // Verificando se já tem uma moeda Yoshi na tela antes de trocar
                 const hasYoshi = d.querySelector('.yoshi-coin');
@@ -191,7 +196,7 @@
                 coin.classList.add('coin');
                 coin.style.bottom = isBetter ? '200px' : '50px';
 
-                if (!hasYoshi && isBetter && !this.isNight && this.coinControl > (this.maxG / 2) && pipe.left > this.width * .3 && pipe.left < this.width * .6) {
+                if (!hasYoshi && isBetter && !this.isNight && this.coinRandom > (this.maxG / 2) && pipe.left > this.width * .3 && pipe.left < this.width * .6) {
                     coin.src = 'img/yoshi-coin.gif';
                     coin.classList.add('yoshi-coin');
                 }
@@ -206,6 +211,44 @@
                 this.ghostPermit = !this.ghostPermit;
             }
 
+            // Validando se o Mário pegou o item
+            const coinElement = d.querySelector('.coin');
+            if (coinElement) {
+                const coinLeft = coinElement.offsetLeft;
+                const coinBottom = +w.getComputedStyle(coinElement).bottom.replace('px', '');
+                const isYoshiCoin = coinElement.classList.contains("yoshi-coin");
+                const isBoo = coinElement.classList.contains('boo-coin');
+                let coinBetter = (coinBottom > 50);
+                if (coinLeft < -70 || (coinLeft < 130 && coinLeft > 5 && coinBottom > mario.bottom && coinBottom < (mario.bottom + 120))) {
+                    this.element.removeChild(coinElement);
+
+                    // Mario pegou?
+                    if (coinLeft > 5) {
+                        (isBoo ? coinBoo : (isYoshiCoin ? coinYoshi : (coinBetter ? coinHigh : coin))).cloneNode().play();
+
+                        // Se for fantasma, tira pontos
+                        if (isBoo) {
+                            this.sumScore(yoshi ? 1 : 2, true);
+                            if (this.score <= 0) {
+                                // TODO: GameOver por fantasma
+                                // ghostOver = true;
+                            } else if (yoshi) {
+                                // TODO: Se tiver o Yoshi e tocar no fantasma, perde o Yoshi
+                                // yoshiToogle();
+                            }
+
+                        } else {
+                            // Moedas altas valem 2, baixas valem 1. Se for uma Yoshi Coin, vale 5.
+                            this.sumScore(isYoshiCoin ? 5 : (coinBetter ? 2 : 1));
+                            // Bonus por ter pego o yoshi
+                            if (yoshi) {
+                                this.sumScore(isYoshiCoin ? 5 : (coinBetter ? 2 : 1));
+                            }
+                        }
+                    }
+                }
+            }
+
             // Criando ovo do Yoshi se não for de noite
             let eggElement = d.querySelector('.egg');
             if (!this.isNight && !eggElement && !mario.isYoshi && this.score > 0 && (this.score % yoshiScore == 0 || (this.score + 1) % yoshiScore == 0)) {
@@ -214,9 +257,9 @@
                 egg.classList.add('egg');
                 this.element.appendChild(egg);
             }
+
+            // TODO: Controlede pegar ovos
         }
-
-
     }
 
     class MarioStats extends Stats {
@@ -322,7 +365,7 @@
             board.calcMaths();
             pipe.calcMaths();
             mario.calcMaths();
-            board.generateCoin(mario, pipe);
+            board.coinControl(mario, pipe);
 
             // Game over?
             if (pipe.left < 120 && mario.bottom < 100 && pipe.left > 10) {
