@@ -5,25 +5,49 @@
  */
 (function (gameName, d, w) {
     /**
+     * Inicializa um audio
+     */
+    const audio = (file, vol) => {
+        const audioFile = new Audio(file);
+        audioFile.volume = vol;
+        audioFile.preload = 'auto';
+        return audioFile;
+    }
+
+    /**
+     * Adiciona zeros à esquerda de um número
+     */
+    const completeZeros = (num, size) => {
+        var s = num + '';
+        while (s.length < size) s = '0' + s;
+        return s;
+    }
+
+    /**
+     * Retorna um número randômico entre min e max
+     */
+    const getRandomNumberBetween = (min, max) => {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    /**
      * Precarga de áudio
      */
-     const runing = new Audio('audio/runing.mp3');
-     const runingYoshi = (new Audio('audio/yoshi-music.mp3'));
-     const nightRuning = (new Audio('audio/night.mp3'));
-     const jump = (new Audio('audio/jump.mp3'));
-     const gameOver = (new Audio('audio/game-over.mp3'));
-     const bowserLaugh = (new Audio('audio/bowser-laugh.wav'));
-     const yoshi = (new Audio('audio/yoshi.wav'));
-     const yoshiOff = (new Audio('audio/yoshi-off.wav'));
-     const coin = (new Audio('audio/coin2.mp3'));
-     const coinHigh = (new Audio('audio/coin.mp3'));
-     const coinBoo = (new Audio('audio/boo-coin.mp3'));
-     const coinYoshi = (new Audio('audio/yoshi-coin.mp3'));
-     const volback = 0.7;
-     runing.volume = volback;
-     nightRuning.volume = volback;
-     runingYoshi.volume = volback;
-     gameOver.volume = volback;
+    const vol = 1;
+    const volBack = 0.7;
+    const runing = audio('audio/runing.mp3', volBack);
+    const runingYoshi = audio('audio/yoshi-music.mp3', volBack);
+    const nightRuning = audio('audio/night.mp3', volBack);
+    const jump = audio('audio/jump.mp3', vol);
+    const gameOver = audio('audio/game-over.mp3', volBack);
+    const bowserLaugh = audio('audio/bowser-laugh.wav', vol);
+    const yoshi = audio('audio/yoshi.wav', vol);
+    const yoshiOff = audio('audio/yoshi-off.wav', vol);
+    const coin = audio('audio/coin2.mp3', vol);
+    const coinHigh = audio('audio/coin.mp3', vol);
+    const coinBoo = audio('audio/boo-coin.mp3', vol);
+    const coinYoshi = audio('audio/yoshi-coin.mp3', vol);
+
 
     class Stats {
         constructor(element, audioFile = null, audioLooping = false, visible = true) {
@@ -172,21 +196,17 @@
             this.element.style.right = this.right + 'px';
         }
     }
-
+    
     /**
-     * Adiciona zeros à esquerda de um número
+     * Variáveis de baase
      */
-    const completeZeros = (num, size) => {
-        var s = num + '';
-        while (s.length < size) s = '0' + s;
-        return s;
-    }
-
-    /**
-     * Retorna um número randômico entre min e max
-     */
-    const getRandomNumberBetween = (min, max) => {
-        return Math.floor(Math.random() * (max - min + 1) + min);
+    let started = false;
+    const board = new BoardStats();
+    const mario = new MarioStats();
+    const pipe = new PipeStats();
+    const preStart = () => {
+        // Se já iniciou, executa o pulo, senão inicia
+        started ? mario.jump() : start(board, mario, pipe);
     }
 
     /**
@@ -217,18 +237,6 @@
                 clearInterval(loop);
             }
         }, 10);
-    }
-
-    /**
-     * Variáveis de baase
-     */
-    let started = false;
-    const board = new BoardStats();
-    const mario = new MarioStats();
-    const pipe = new PipeStats();
-    const preStart = () => {
-        // Se já iniciou, executa o pulo, senão inicia
-        started ? mario.jump() : start(board, mario, pipe);
     }
 
     /**
