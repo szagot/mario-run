@@ -21,7 +21,7 @@
     const volBack = 0.7;
     const runing = audio('audio/runing.mp3', volBack);
     const runingYoshi = audio('audio/yoshi-music.mp3', volBack);
-    const nightRuning = audio('audio/night.mp3', volBack);
+    const runingNight = audio('audio/night.mp3', volBack);
     const jump = audio('audio/jump.mp3', vol);
     const gameOver = audio('audio/game-over.mp3', volBack);
     const bowserLaugh = audio('audio/bowser-laugh.wav', vol);
@@ -112,17 +112,34 @@
             this.maxScore = 0;
             this.isNight = false;
             this.started = false;
+            this.isGameOver = false;
             this.persistScores();
             this.generateCoinRandom();
         }
 
         start() {
+            if (this.isGameOver) {
+                return;
+            }
             this.started = true;
+            this.clearCoins();
+            d.querySelector('.start').style.opacity = '0';
+            d.querySelector('.game-over').style.opacity = '0';
+            d.querySelector('.btn').style.opacity = '0';
         }
 
         gameOver() {
             this.started = false;
+            this.isGameOver = true;
             this.persistScores();
+            this.stopCoins();
+            d.querySelector('.game-over').style.opacity = '1';
+            setTimeout(() => {
+                d.querySelector('.btn').style.opacity = '1';
+                setTimeout(() => {
+                    this.isGameOver = false;
+                }, 1000);
+            }, 1000);
         }
 
         /**
@@ -212,7 +229,41 @@
             }
 
             // Validando se o Mário pegou o item
-            const coinElement = d.querySelector('.coin');
+            const coinElement = d.querySelectorAll('.coin');
+            this.verifyGetCoin(coinElement[0], mario);
+            // Isso se faz necessário por que as vezes o segundo item alcansou o Mario, 
+            // mas o primeiro ainda não foi eliminado
+            this.verifyGetCoin(coinElement[1], mario);
+
+            // Criando ovo do Yoshi se não for de noite
+            let eggElement = d.querySelector('.egg');
+            if (!this.isNight && !eggElement && !mario.isYoshi && this.score > 0 && (this.score % yoshiScore == 0 || (this.score + 1) % yoshiScore == 0)) {
+                const egg = d.createElement('img');
+                egg.src = 'img/egg-yoshi.gif';
+                egg.classList.add('egg');
+                this.element.appendChild(egg);
+            }
+
+            // Controle de ovo coletadas e pontuação
+            eggElement = d.querySelector('.egg');
+            if (eggElement) {
+                const eggLeft = eggElement.offsetLeft;
+                const eggBottom = +w.getComputedStyle(eggElement).bottom.replace('px', '');
+                if (eggLeft <= 5 || (eggLeft < 130 && eggBottom > mario.bottom && eggBottom < (mario.bottom + 120))) {
+                    this.element.removeChild(eggElement);
+
+                    // Pegou o ovo?
+                    if (eggLeft > 5) {
+                        mario.yoshiToogle();
+                    }
+                }
+            }
+        }
+
+        /**
+         * Verifica se o mario pegou o item
+         */
+        verifyGetCoin(coinElement, mario) {
             if (coinElement) {
                 const coinLeft = coinElement.offsetLeft;
                 const coinBottom = +w.getComputedStyle(coinElement).bottom.replace('px', '');
@@ -233,8 +284,8 @@
                                 // TODO: GameOver por fantasma
                                 // ghostOver = true;
                             } else if (yoshi) {
-                                // TODO: Se tiver o Yoshi e tocar no fantasma, perde o Yoshi
-                                // yoshiToogle();
+                                // Se tiver o Yoshi e tocar no fantasma, perde o Yoshi
+                                mario.yoshiToogle();
                             }
 
                         } else {
@@ -248,17 +299,33 @@
                     }
                 }
             }
+        }
 
-            // Criando ovo do Yoshi se não for de noite
-            let eggElement = d.querySelector('.egg');
-            if (!this.isNight && !eggElement && !mario.isYoshi && this.score > 0 && (this.score % yoshiScore == 0 || (this.score + 1) % yoshiScore == 0)) {
-                const egg = d.createElement('img');
-                egg.src = 'img/egg-yoshi.gif';
-                egg.classList.add('egg');
-                this.element.appendChild(egg);
+        stopCoins() {
+            // Pausando moedas
+            const coins = d.querySelectorAll('.coin');
+            coins.forEach((coin) => {
+                coin.style.left = `${coin.offsetLeft}px`;
+                coin.style.animation = 'none';
+            });
+
+            // Pausando ovos
+            const egg = d.querySelector('.egg');
+            if (egg) {
+                egg.style.left = `${egg.offsetLeft}px`;
+                egg.style.animation = 'none';
             }
+        }
 
-            // TODO: Controlede pegar ovos
+        clearCoins() {
+            const coins = d.querySelectorAll('.coin');
+            coins.forEach((coin) => {
+                this.element.removeChild(coin);
+            });
+            const eggs = d.querySelectorAll('.egg');
+            eggs.forEach((egg) => {
+                this.element.removeChild(egg);
+            });
         }
     }
 
@@ -310,6 +377,29 @@
             this.element.style.opacity = '1';
             this.visible = true;
         }
+
+        // TODO
+        yoshiToogle(board) {
+            this.element.src = this.isYoshi ? 'img/mario.gif' : 'img/mario-yoshi.gif';
+            this.isYoshi = !this.isYoshi;
+            if (this.isYoshi) {
+                if (board.isNight) {
+                    runingNight.pause();
+                } else {
+                    runing.pause();
+                }
+                yoshi.play();
+                runingYoshi.play();
+            } else {
+                runingYoshi.pause();
+                yoshiOff.play();
+                if (isNight) {
+                    runingNight.play();
+                } else {
+                    runing.play();
+                }
+            }
+        }
     }
 
     class PipeStats extends Stats {
@@ -351,7 +441,7 @@
      * @returns 
      */
     const start = (board, mario, pipe) => {
-        if (board.started) {
+        if (board.started || board.isGameOver) {
             return;
         }
 
