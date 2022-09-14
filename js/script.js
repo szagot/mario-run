@@ -419,8 +419,7 @@
             coinIndex++;
 
             // Controle de moedas coletadas e pontuação
-            const coinElement = d.querySelector('.coin');
-            if (coinElement) {
+            const verifyGetCoin = function (coinElement) {
                 const coinLeft = coinElement.offsetLeft;
                 const coinBottom = +w.getComputedStyle(coinElement).bottom.replace('px', '');
                 const isyoshiCoin = coinElement.classList.contains("yoshi-coin");
@@ -454,6 +453,10 @@
                     }
                 }
             }
+            const coinElements = d.querySelectorAll('.coin');
+            verifyGetCoin(coinElements[0]);
+            // Repeteco se faz necessário para o caso de não ter coletado o elemento 0 e o elemento 1 sim
+            if (coinElements[1]) verifyGetCoin(coinElements[1]);
 
             // Criando ovo do Yoshi se não for de noite
             let eggElement = d.querySelector('.egg');
