@@ -454,7 +454,7 @@
                 }
             }
             const coinElements = d.querySelectorAll('.coin');
-            verifyGetCoin(coinElements[0]);
+            if (coinElements[0]) verifyGetCoin(coinElements[0]);
             // Repeteco se faz necessário para o caso de não ter coletado o elemento 0 e o elemento 1 sim
             if (coinElements[1]) verifyGetCoin(coinElements[1]);
 
