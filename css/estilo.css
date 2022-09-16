@@ -117,7 +117,12 @@
     height: 40%;
     max-height: 252px;
     animation: clouds-animation 10s infinite linear;
+    transition: all 1s ease;
     z-index: 2;
+}
+.clouds.shadow {
+    opacity: 0.8;
+    filter: brightness(0.5) saturate(0);
 }
 
 .night {

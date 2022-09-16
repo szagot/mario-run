@@ -12,6 +12,7 @@
     const start = d.querySelector('.start');
     const scoreElement = d.querySelector('.score');
     const maxScoreElement = d.querySelector('.max-score');
+    const clouds = d.querySelector('.clouds');
     const night = d.querySelector('.night');
     let loop;
     let score = 0;
@@ -127,6 +128,7 @@
             // Prossegue apenas se o jogo estiver em execução
             if (!finished && init) {
                 night.classList.add('mario-show');
+                clouds.classList.add('shadow');
                 pipe.style.opacity = '0';
                 isNight = true;
                 w.setTimeout(() => {
@@ -144,6 +146,7 @@
                     // Prossegue apenas se o jogo estiver em execução
                     if (!finished && init) {
                         night.classList.remove('mario-show');
+                        clouds.classList.remove('shadow');
                         pipe.style.right = '-160px';
                         pipe.style.opacity = '1';
                         w.setTimeout(() => {
@@ -512,7 +515,12 @@
             return false;
         }
     })
-    btn.addEventListener('click', clearScreen);
+    btn.addEventListener('click', () => {
+        // Reinicia apenas se a opacidade estiver ativa
+        if (btn.style.opacity * 1 === 1) {
+            clearScreen();
+        }
+    });
     start.addEventListener('click', jump);
 
     startGame();
