@@ -7,7 +7,7 @@ Jogo simples no estilo Chrome Dino (aquele do seu navegador quando a internet ca
 
 Use qualquer tecla para pular o cano e/ou para reiniciar a partida. Funciona com clicks do mouse ou toque na tela do aparelho.
 
-Caso queira ver o jogo em ação, **ligue o som** e acesse: [Mario v4](http://phones2.orgfree.com/mario/)
+Caso queira ver o jogo em ação, **ligue o som** e acesse: [Mario v4](https://martiorun.herokuapp.com/)
 
 ## Jogabilidade (Versão 4+)
 
